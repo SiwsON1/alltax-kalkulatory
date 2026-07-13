@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Kalkulatory brutto-netto - podglad roboczy | All-tax</title>
+<style>
+  :root{
+    --navy:#262261; --navy2:#312c73; --red:#ED1C24; --ink:#1a1a2e;
+    --bg:#f4f5fb; --card:#ffffff; --muted:#6b6f8a; --line:#e7e8f2;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+  header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 100%);color:#fff;padding:54px 0 60px;position:relative;overflow:hidden}
+  header::after{content:"";position:absolute;right:-80px;top:-80px;width:320px;height:320px;background:radial-gradient(circle,rgba(237,28,36,.22),transparent 70%);border-radius:50%}
+  .brand{display:inline-flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.3px;font-size:20px;margin-bottom:26px}
+  .brand .dot{width:11px;height:11px;border-radius:50%;background:var(--red);display:inline-block}
+  .eyebrow{display:inline-block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.4px;background:rgba(255,255,255,.13);padding:6px 13px;border-radius:100px;margin-bottom:16px}
+  h1{font-size:36px;line-height:1.12;font-weight:800;max-width:620px;margin-bottom:14px}
+  header p{max-width:560px;color:rgba(255,255,255,.82);font-size:16px}
+  main{padding:44px 0 70px}
+  .note{background:#fff8e6;border:1px solid #f2e2a8;color:#7a5c00;border-radius:12px;padding:14px 18px;font-size:14px;margin-bottom:32px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 22px 20px;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:8px;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}
+  .card:hover{transform:translateY(-3px);box-shadow:0 14px 34px -18px rgba(38,34,97,.4);border-color:#cfd1e6}
+  .card .flag{font-size:30px;line-height:1}
+  .card h2{font-size:19px;font-weight:750;display:flex;align-items:center;gap:9px}
+  .card .cur{font-size:12px;font-weight:700;color:var(--navy);background:#eef0fb;padding:2px 9px;border-radius:100px}
+  .card p{font-size:13.5px;color:var(--muted)}
+  .card .go{margin-top:6px;font-size:13px;font-weight:700;color:var(--red);display:inline-flex;align-items:center;gap:6px}
+  .card .go svg{transition:transform .16s ease}
+  .card:hover .go svg{transform:translateX(3px)}
+  footer{border-top:1px solid var(--line);padding:26px 0 40px;color:var(--muted);font-size:13px}
+  @media(max-width:640px){h1{font-size:28px}header{padding:40px 0 46px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="brand"><span class="dot"></span> ALL-TAX</div>
+    <span class="eyebrow">Podglad roboczy</span>
+    <h1>Kalkulatory brutto-netto</h1>
+    <p>Zestaw kalkulatorow wynagrodzenia netto dla siedmiu krajow. Wersje robocze do akceptacji, jeszcze nieopublikowane na stronie.</p>
+  </div>
+</header>
+<main>
+  <div class="wrap">
+    <div class="note"><strong>Uwaga:</strong> to wersje robocze (noindex). Kwoty maja charakter orientacyjny i sluza do przegladu ukladu, tresci i sposobu liczenia przed publikacja.</div>
+    <div class="grid">
+      <a class="card" href="niemcy/"><span class="flag">🇩🇪</span><h2>Niemcy <span class="cur">EUR</span></h2><p>Klasy podatkowe, landy, KV/PV/RV/AV, Soli, Kirchensteuer, delegowanie A1.</p><span class="go">Otworz kalkulator <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+      <a class="card" href="holandia/"><span class="flag">🇳🇱</span><h2>Holandia <span class="cur">EUR</span></h2><p>Box 1, heffingskortingen, arbeidskorting, 30% ruling, vakantiegeld.</p><span class="go">Otworz kalkulator <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+      <a class="card" href="austria/"><span class="flag">🇦🇹</span><h2>Austria <span class="cur">EUR</span></h2><p>Lohnsteuer, SV, Höchstbeitragsgrundlage, 13. i 14. pensja, Familienbonus.</p><span class="go">Otworz kalkulator <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+      <a class="card" href="belgia/"><span class="flag">🇧🇪</span><h2>Belgia <span class="cur">EUR</span></h2><p>RSZ 13,07%, werkbonus, bedrijfsvoorheffing wg oficjalnej metody FOD, BBSZ.</p><span class="go">Otworz kalkulator <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+      <a class="card" href="norwegia/"><span class="flag">🇳🇴</span><h2>Norwegia <span class="cur">NOK</span></h2><p>Trygdeavgift, trinnskatt, minstefradrag, personfradrag, tryb PAYE 25%.</p><span class="go">Otworz kalkulator <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+      <a class="card" href="dania/"><span class="flag">🇩🇰</span><h2>Dania <span class="cur">DKK</span></h2><p>AM-bidrag, ATP, bundskat, kommuneskat, reforma 2026 (mellemskat/topskat).</p><span class="go">Otworz kalkulator <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+      <a class="card" href="wielka-brytania/"><span class="flag">🇬🇧</span><h2>Wielka Brytania <span class="cur">GBP</span></h2><p>Income Tax, National Insurance, Personal Allowance, student loan, pension.</p><span class="go">Otworz kalkulator <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+    </div>
+  </div>
+</main>
+<footer>
+  <div class="wrap">All-tax - kalkulatory brutto-netto - wersja robocza. Wartosci orientacyjne, nie stanowia porady podatkowej.</div>
+</footer>
+</body>
+</html>
