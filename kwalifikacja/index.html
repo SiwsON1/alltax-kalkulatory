@@ -216,16 +216,23 @@ function valid(){
   const ok=document.getElementById('imie').value.trim() && document.getElementById('tel').value.trim().length>=6 && document.getElementById('zgoda').checked;
   document.getElementById('send').disabled=!ok;
 }
+// DEMO: realny odbiornik (webhook.site). Na all-tax podmienia sie na Contact Form 7 / webhook n8n -> mail do biura.
+const ENDPOINT='https://webhook.site/e259349e-bf4e-459c-a20e-acd82679c615';
 function submitForm(){
   const btn=document.getElementById('send'); btn.disabled=true;
   document.getElementById('sendlbl').outerHTML='<span class="spinner"></span><span>Wysyłam...</span>';
-  // NA STRONIE ALL-TAX: tu POST do Contact Form 7 / webhook n8n -> mail do biura.
   const imie=document.getElementById('imie').value.trim();
-  console.log('ZGLOSZENIE (do wyslania mailem):', JSON.stringify(answers));
-  setTimeout(()=>{
-    document.getElementById('doneMsg').textContent='Dziekujemy '+imie+'. Oddzwonimy w ciagu 24h w sprawie zwrotu z: '+(answers.kraj||'zagranicy')+'.';
-    step=5; render();
-  }, 900);
+  const payload={
+    imie, telefon:document.getElementById('tel').value.trim(), email:document.getElementById('email').value.trim(),
+    kraj:answers.kraj, lata:answers.lata, karta_podatkowa:answers.karta,
+    zrodlo:'Formularz kwalifikacji zwrotu (all-tax)', data:new Date().toISOString()
+  };
+  fetch(ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)})
+    .catch(()=>{})
+    .finally(()=>{
+      document.getElementById('doneMsg').textContent='Dziekujemy '+imie+'. Oddzwonimy w ciagu 24h w sprawie zwrotu z: '+(answers.kraj||'zagranicy')+'.';
+      step=5; render();
+    });
 }
 function restart(){
   Object.assign(answers,{kraj:'',lata:[],karta:''});
