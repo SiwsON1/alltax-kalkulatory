@@ -64,8 +64,12 @@
   .spinner{width:16px;height:16px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
 
   /* RESULT + FORM */
-  .badge{display:inline-flex;align-items:center;gap:8px;background:var(--okbg);color:var(--ok);font-weight:700;font-size:13px;padding:8px 14px;border-radius:6px;margin-bottom:14px}
+  .badge{display:inline-flex;align-items:center;gap:8px;background:var(--okbg);color:var(--ok);font-weight:700;font-size:13px;padding:8px 14px;border-radius:6px;margin-bottom:14px;line-height:1.3}
+  .badge.neutral{background:#eef0fb;color:var(--navy)}
+  .badge.caution{background:#fbf0e2;color:#b06f16}
+  .badge svg{flex:none}
   .step.on .badge{animation:pop .5s var(--eout) both}
+  .verdict{font-size:13.5px;color:var(--text);background:#f7f8fd;border:1px solid var(--line);border-radius:9px;padding:13px 15px;margin-bottom:16px;line-height:1.55}
   .chips{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0 18px}
   .chip{background:#f1f2fb;color:var(--navy);font-size:12.5px;font-weight:600;padding:6px 12px;border-radius:5px}
   .field{margin-bottom:13px}
@@ -98,20 +102,20 @@
 </style>
 </head>
 <body>
-<div class="note">Wersja robocza. Do osadzenia na podstronach usług (np. „zwrot podatku z Niemiec") jako formularz kontaktowy. Na stronie all-tax zgłoszenie leci mailem do biura (Contact Form 7 / webhook do n8n).</div>
+<div class="note">Wersja robocza. Do osadzenia na podstronach usług (np. „zwrot podatku z Niemiec") jako formularz kwalifikacyjny. Pytania i wynik są dopasowane do wybranego kraju (różne terminy, dokumenty, przesłanki). Na stronie all-tax zgłoszenie leci mailem do biura (Contact Form 7 / webhook do n8n).</div>
 
 <div class="shell">
   <div class="top">
     <div class="row"><h1>Sprawdź swój zwrot</h1><span class="cnt" id="cnt">Krok 1 z 4</span></div>
-    <p>Kilka pytań, a my oddzwonimy i powiemy, czy warto. Bez zobowiązań.</p>
+    <p>Kilka pytań, a my oddzwonimy i uczciwie powiemy, czy warto. Bez zobowiązań.</p>
     <div class="bar"><i id="bar"></i></div>
   </div>
 
   <div class="body">
-    <!-- 1 -->
+    <!-- 1: KRAJ -->
     <div class="step on" data-step="1">
       <h2>W którym kraju pracowałeś?</h2>
-      <p class="hint">Wybierz kraj, z którego chcesz odzyskać podatek.</p>
+      <p class="hint">Wybierz kraj, z którego chcesz odzyskać podatek. Zasady różnią się między krajami.</p>
       <div class="opts" id="kraje">
         <div class="opt" data-v="Niemcy"><span class="flag">🇩🇪</span> Niemcy <span class="tick"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></span></div>
         <div class="opt" data-v="Holandia"><span class="flag">🇳🇱</span> Holandia <span class="tick"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></span></div>
@@ -123,37 +127,40 @@
       <div class="nav"><span></span><button class="btn primary" disabled onclick="next()">Dalej</button></div>
     </div>
 
-    <!-- 2 -->
+    <!-- 2: LATA (dynamiczne per kraj) -->
     <div class="step" data-step="2">
       <h2>Za jakie lata chcesz się rozliczyć?</h2>
-      <p class="hint">Zwrot można odzyskać nawet do 4 lat wstecz. Zaznacz wszystkie, które Cię dotyczą.</p>
-      <div class="opts" id="lata">
-        <div class="opt" data-v="2025">2025 <span class="tick"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></span></div>
-        <div class="opt" data-v="2024">2024 <span class="tick"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></span></div>
-        <div class="opt" data-v="2023">2023 <span class="tick"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></span></div>
-        <div class="opt" data-v="2022">2022 <span class="tick"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></span></div>
-        <div class="opt" data-v="Nie wiem">Nie jestem pewien <span class="tick"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></span></div>
-      </div>
+      <p class="hint" id="hintLata">Zaznacz wszystkie lata, które Cię dotyczą.</p>
+      <div class="opts" id="lata"></div>
       <div class="nav"><button class="btn ghost" onclick="prev()">Wstecz</button><button class="btn primary" disabled onclick="next()">Dalej</button></div>
     </div>
 
-    <!-- 3 -->
+    <!-- 3: OKRES / SYSTEM (adaptacyjne) -->
     <div class="step" data-step="3">
+      <h2 id="q3title">Pracowałeś cały rok czy tylko część roku?</h2>
+      <p class="hint" id="q3hint">To najważniejsze pytanie. Praca przez część roku prawie zawsze oznacza nadpłatę do zwrotu.</p>
+      <div class="opts one" id="okres"></div>
+      <div class="nav"><button class="btn ghost" onclick="prev()">Wstecz</button><button class="btn primary" disabled onclick="next()">Dalej</button></div>
+    </div>
+
+    <!-- 4: DOKUMENT -->
+    <div class="step" data-step="4">
       <h2>Masz roczne rozliczenie od pracodawcy?</h2>
       <p class="hint" id="hintKarta">To dokument od pracodawcy z podsumowaniem zarobków za rok. Jeśli nie masz, też pomożemy go odzyskać.</p>
       <div class="opts one" id="karta">
-        <div class="opt" data-v="Tak, mam">Tak, mam kartę / karty podatkowe <span class="tick"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></span></div>
+        <div class="opt" data-v="Tak, mam">Tak, mam ten dokument <span class="tick"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></span></div>
         <div class="opt" data-v="Nie, potrzebuję pomocy">Nie mam, potrzebuję pomocy w odzyskaniu <span class="tick"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></span></div>
         <div class="opt" data-v="Nie wiem">Nie wiem, co to jest <span class="tick"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></span></div>
       </div>
       <div class="nav"><button class="btn ghost" onclick="prev()">Wstecz</button><button class="btn primary" disabled onclick="next()">Zobacz wynik</button></div>
     </div>
 
-    <!-- 4 -->
-    <div class="step" data-step="4">
-      <span class="badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M4 12l6 6L20 6"/></svg> Wygląda na to, że warto się rozliczyć</span>
+    <!-- 5: WYNIK + FORMULARZ -->
+    <div class="step" data-step="5">
+      <span class="badge" id="badge"></span>
       <h2>Zostaw kontakt, sprawdzimy to bezpłatnie</h2>
       <p class="hint">Oddzwonimy w ciągu 24h i powiemy, ile realnie możesz odzyskać. Bez opłat z góry.</p>
+      <p class="verdict" id="verdictMsg"></p>
       <div class="chips" id="chips"></div>
       <div class="field"><label>Imię</label><input id="imie" type="text" placeholder="Jan" autocomplete="given-name"></div>
       <div class="field"><label>Telefon</label><input id="tel" type="tel" placeholder="600 000 000" autocomplete="tel"></div>
@@ -162,8 +169,8 @@
       <div class="nav"><button class="btn ghost" onclick="prev()">Wstecz</button><button class="btn primary" id="send" disabled onclick="submitForm()"><span id="sendlbl">Wyślij zgłoszenie</span></button></div>
     </div>
 
-    <!-- 5 -->
-    <div class="step" data-step="5">
+    <!-- 6: SUKCES -->
+    <div class="step" data-step="6">
       <div class="done">
         <div class="okmark"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></div>
         <h2>Dziękujemy, zgłoszenie przyjęte</h2>
@@ -176,20 +183,41 @@
   <div class="trust" id="trust">
     <span><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg> Bez opłat z góry</span>
     <span><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg> Oddzwaniamy w 24h</span>
-    <span><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg> Rozliczamy podatek z 7 krajów</span>
+    <span><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg> Rozliczamy podatki z 6 krajów</span>
   </div>
 </div>
 
 <script>
-const answers={kraj:'',lata:[],karta:''};
+/* ---- Dane per kraj (zweryfikowane 2026-07-14, oficjalne urzędy) ---- */
+const LOC={Niemcy:'Niemczech',Holandia:'Holandii',Austria:'Austrii',Belgia:'Belgii',Norwegia:'Norwegii',Dania:'Danii'};
+const YEARS={
+  Niemcy:['2025','2024','2023','2022'],          // 4 lata wstecz
+  Holandia:['2025','2024','2023','2022','2021'],  // 5 lat
+  Austria:['2025','2024','2023','2022','2021'],   // 5 lat
+  Belgia:['2025','2024','2023'],                  // 3 lata
+  Norwegia:['2025','2024','2023'],                // 3 lata
+  Dania:['2025','2024','2023']                    // 3 lata
+};
+const BACK={Niemcy:4,Holandia:5,Austria:5,Belgia:3,Norwegia:3,Dania:3};
+const DOK={Niemcy:'Lohnsteuerbescheinigung',Holandia:'Jaaropgaaf',Austria:'Lohnzettel (L16)',Belgia:'fiche 281.10',Norwegia:'sammenstillingsoppgave (årsoppgave)',Dania:'oplysningsseddel'};
+
+const answers={kraj:'',lata:[],okres:'',karta:''};
 let step=1;
+
+const CHECK='<span class="tick"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></span>';
+const ICON={
+  ok:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M4 12l6 6L20 6"/></svg>',
+  info:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="12" cy="12" r="9"/><path d="M12 11.2v5" stroke-linecap="round"/><path d="M12 7.7v.02" stroke-linecap="round"/></svg>'
+};
+
 function render(){
   document.querySelectorAll('.step').forEach(s=>s.classList.toggle('on', +s.dataset.step===step));
-  document.getElementById('cnt').textContent = step>=5 ? 'Gotowe' : 'Krok '+step+' z 4';
-  const W={1:0,2:.25,3:.5,4:.75,5:1};
+  document.getElementById('cnt').textContent = step<=4 ? ('Krok '+step+' z 4') : (step===5?'Twój wynik':'Gotowe');
+  const W={1:0,2:.25,3:.5,4:.75,5:1,6:1};
   document.getElementById('bar').style.transform='scaleX('+(W[step]!==undefined?W[step]:1)+')';
-  document.getElementById('trust').style.display = step>=5 ? 'none':'flex';
+  document.getElementById('trust').style.display = step>=6 ? 'none':'flex';
 }
+
 function bindSingle(id,key){
   document.querySelectorAll('#'+id+' .opt').forEach(o=>o.onclick=()=>{
     document.querySelectorAll('#'+id+' .opt').forEach(x=>x.classList.remove('sel'));
@@ -198,33 +226,127 @@ function bindSingle(id,key){
   });
 }
 bindSingle('kraje','kraj'); bindSingle('karta','karta');
-document.querySelectorAll('#lata .opt').forEach(o=>o.onclick=()=>{
-  o.classList.toggle('sel');
-  answers.lata=[...document.querySelectorAll('#lata .opt.sel')].map(x=>x.dataset.v);
-  document.querySelector('.step[data-step="2"] .btn.primary').disabled=answers.lata.length===0;
+
+/* Zmiana kraju resetuje odpowiedzi zależne od kraju */
+document.querySelectorAll('#kraje .opt').forEach(o=>{
+  const orig=o.onclick;
+  o.onclick=()=>{ if(answers.kraj && answers.kraj!==o.dataset.v){answers.lata=[];answers.okres='';} orig(); };
 });
+
+/* --- KROK 2: lata dynamiczne --- */
+function buildLata(){
+  const box=document.getElementById('lata');
+  const yrs=YEARS[answers.kraj]||['2025','2024','2023','2022'];
+  const valid=new Set(yrs);
+  answers.lata=answers.lata.filter(y=>valid.has(y)||y==='Nie wiem');
+  box.innerHTML = yrs.map(y=>'<div class="opt" data-v="'+y+'">'+y+' '+CHECK+'</div>').join('')
+    + '<div class="opt" data-v="Nie wiem">Nie jestem pewien '+CHECK+'</div>';
+  box.classList.toggle('one', yrs.length<=1);
+  document.getElementById('hintLata').textContent='W '+LOC[answers.kraj]+' zwrot można odzyskać do '+BACK[answers.kraj]+' lat wstecz. Zaznacz lata, które Cię dotyczą.';
+  box.querySelectorAll('.opt').forEach(o=>o.onclick=()=>{
+    o.classList.toggle('sel');
+    answers.lata=[...box.querySelectorAll('.opt.sel')].map(x=>x.dataset.v);
+    document.querySelector('.step[data-step="2"] .btn.primary').disabled=answers.lata.length===0;
+  });
+  answers.lata.forEach(y=>{const s=box.querySelector('.opt[data-v="'+y+'"]');if(s)s.classList.add('sel');});
+  document.querySelector('.step[data-step="2"] .btn.primary').disabled=answers.lata.length===0;
+}
+
+/* --- KROK 3: okres pracy / system rozliczenia (adaptacyjne) --- */
+function buildOkres(){
+  const box=document.getElementById('okres');
+  const t=document.getElementById('q3title'), h=document.getElementById('q3hint');
+  let opts;
+  if(answers.kraj==='Norwegia'){
+    t.textContent='Jak rozliczałeś podatek w Norwegii?';
+    h.textContent='To kluczowe. Przy systemie PAYE (kildeskatt, 25% z każdej wypłaty) nie ma odliczeń i zwykle nie ma zwrotu.';
+    opts=[
+      ['ogolne','Na zasadach ogólnych (ze zwrotem, ulgami)'],
+      ['paye','PAYE / kildeskatt (25% z każdej wypłaty)'],
+      ['nie-wiem-system','Nie wiem, jak byłem rozliczany']
+    ];
+  }else{
+    t.textContent='Pracowałeś cały rok czy tylko część roku?';
+    h.textContent='To najważniejsze pytanie. Praca przez część roku prawie zawsze oznacza nadpłatę do zwrotu.';
+    opts=[
+      ['czesc','Tylko część roku (kilka miesięcy)'],
+      ['caly','Cały rok (mniej więcej 12 miesięcy)'],
+      ['roznie','Różnie / nie pamiętam']
+    ];
+  }
+  box.innerHTML=opts.map(([v,l])=>'<div class="opt" data-v="'+v+'">'+l+' '+CHECK+'</div>').join('');
+  const valid=new Set(opts.map(o=>o[0]));
+  if(!valid.has(answers.okres)) answers.okres='';
+  bindSingle('okres','okres');
+  const btn=document.querySelector('.step[data-step="3"] .btn.primary');
+  if(answers.okres){const s=box.querySelector('.opt[data-v="'+answers.okres+'"]');if(s){s.classList.add('sel');btn.disabled=false;}}
+  else btn.disabled=true;
+}
+
+/* --- KROK 4: nazwa dokumentu per kraj --- */
+function setDokHint(){
+  if(answers.kraj && DOK[answers.kraj]){
+    document.getElementById('hintKarta').textContent='W '+LOC[answers.kraj]+' to '+DOK[answers.kraj]+' (roczne zestawienie od pracodawcy). Jeśli go nie masz, też pomożemy go odzyskać.';
+  }
+}
+
+/* --- WYNIK: kalibrowany, uczciwy per kraj + odpowiedzi --- */
+function resultVerdict(){
+  const k=answers.kraj, o=answers.okres;
+  if(k==='Norwegia'){
+    if(o==='paye') return {tone:'caution', title:'Uczciwie: zwrot nie jest tu pewny',
+      txt:'Przy rozliczeniu PAYE (podatek 25% z każdej wypłaty) system nie przewiduje odliczeń, więc zwykle nie ma z czego oddawać nadpłaty. Zweryfikujemy jednak Twój przypadek bezpłatnie: czasem część poboru można odzyskać albo opłaca się przejść na zasady ogólne.'};
+    if(o==='ogolne') return {tone:'ok', title:'Wygląda na to, że warto się rozliczyć',
+      txt:'Rozliczenie na zasadach ogólnych plus dojazdy do Polski (status pendler, wizyty w domu) często dają realny zwrot. Sprawdzimy, ile możesz odzyskać.'};
+    return {tone:'neutral', title:'Sprawdźmy, czy należy Ci się zwrot',
+      txt:'Wynik zależy od tego, czy byłeś na PAYE (25% bez odliczeń, zwykle bez zwrotu), czy na zasadach ogólnych. Ustalimy to za Ciebie bezpłatnie.'};
+  }
+  if(o==='czesc') return {tone:'ok', title:'Wygląda na to, że warto się rozliczyć',
+    txt:'Praca przez część roku prawie zawsze oznacza nadpłatę: zaliczki liczono tak, jakbyś zarabiał przez cały rok, a roczny podatek wychodzi dużo niższy. To najczęstszy powód zwrotu.'};
+  if(o==='caly') return {tone:'neutral', title:'Sprawdźmy, czy należy Ci się zwrot',
+    txt:'Przy pracy przez cały rok zwrot zależy od ulg i Twojej sytuacji (klasa/stawka podatkowa, dzieci, dojazdy, status podatnika zagranicznego). Sprawdzimy bezpłatnie, czy coś Ci się należy, i nie damy fałszywej obietnicy.'};
+  return {tone:'neutral', title:'Sprawdźmy, czy należy Ci się zwrot',
+    txt:'Żeby uczciwie ocenić zwrot, musimy spojrzeć na Twoje dokumenty i okres pracy. Zrobimy to bezpłatnie i bez zobowiązań.'};
+}
+function applyVerdict(){
+  const v=resultVerdict();
+  const badge=document.getElementById('badge');
+  badge.className='badge '+(v.tone==='ok'?'':v.tone);
+  badge.innerHTML=(v.tone==='ok'?ICON.ok:ICON.info)+'<span>'+v.title+'</span>';
+  document.getElementById('verdictMsg').textContent=v.txt;
+}
+
+function okresLabel(){
+  if(!answers.okres) return '';
+  if(answers.kraj==='Norwegia') return {ogolne:'zasady ogólne',paye:'PAYE (25%)','nie-wiem-system':'system do ustalenia'}[answers.okres];
+  return {czesc:'część roku',caly:'cały rok',roznie:'okres do ustalenia'}[answers.okres];
+}
 function buildChips(){
   const c=[];
   if(answers.kraj) c.push(answers.kraj);
   if(answers.lata.length) c.push(answers.lata.filter(x=>x!=='Nie wiem').join(', ')||'lata do ustalenia');
-  if(answers.karta) c.push('Karta: '+answers.karta.split(',')[0].toLowerCase());
+  const ol=okresLabel(); if(ol) c.push(ol);
+  if(answers.karta) c.push('Dokument: '+answers.karta.split(',')[0].toLowerCase());
   document.getElementById('chips').innerHTML=c.map(x=>'<span class="chip">'+x+'</span>').join('');
 }
-const DOK={Niemcy:'Lohnsteuerbescheinigung',Holandia:'Jaaropgaaf',Austria:'Lohnzettel (L16)',Belgia:'fiche 281.10',Norwegia:'sammenstilling (roczne zestawienie)',Dania:'oplysningsseddel'};
+
 function next(){
-  if(step<4){
-    if(step===2 && answers.kraj && DOK[answers.kraj]){
-      document.getElementById('hintKarta').textContent='W '+({Niemcy:'Niemczech',Holandia:'Holandii',Austria:'Austrii',Belgia:'Belgii',Norwegia:'Norwegii',Dania:'Danii'}[answers.kraj]||answers.kraj)+' to '+DOK[answers.kraj]+'. Jeśli nie masz, też pomożemy go odzyskać.';
-    }
-    step++; if(step===4)buildChips(); render();
-  }
+  if(step>=5)return;
+  step++;
+  if(step===2) buildLata();
+  if(step===3) buildOkres();
+  if(step===4) setDokHint();
+  if(step===5){ buildChips(); applyVerdict(); }
+  render();
 }
 function prev(){ if(step>1){step--;render();} }
+
 ['imie','tel','zgoda'].forEach(id=>{const el=document.getElementById(id);el.addEventListener('input',valid);el.addEventListener('change',valid);});
 function valid(){
   const ok=document.getElementById('imie').value.trim() && document.getElementById('tel').value.trim().length>=6 && document.getElementById('zgoda').checked;
   document.getElementById('send').disabled=!ok;
 }
+
 // DEMO: realny odbiornik (webhook.site). Na all-tax podmienia sie na Contact Form 7 / webhook n8n -> mail do biura.
 const ENDPOINT='https://webhook.site/e259349e-bf4e-459c-a20e-acd82679c615';
 function submitForm(){
@@ -233,20 +355,21 @@ function submitForm(){
   const imie=document.getElementById('imie').value.trim();
   const payload={
     imie, telefon:document.getElementById('tel').value.trim(), email:document.getElementById('email').value.trim(),
-    kraj:answers.kraj, lata:answers.lata, karta_podatkowa:answers.karta,
+    kraj:answers.kraj, lata:answers.lata, okres:answers.okres, dokument:answers.karta,
+    wynik:resultVerdict().title,
     zrodlo:'Formularz kwalifikacji zwrotu (all-tax)', data:new Date().toISOString()
   };
   fetch(ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)})
     .catch(()=>{})
     .finally(()=>{
       document.getElementById('doneMsg').textContent='Dziekujemy '+imie+'. Oddzwonimy w ciagu 24h w sprawie zwrotu z: '+(answers.kraj||'zagranicy')+'.';
-      step=5; render();
+      step=6; render();
     });
 }
 function restart(){
-  Object.assign(answers,{kraj:'',lata:[],karta:''});
+  Object.assign(answers,{kraj:'',lata:[],okres:'',karta:''});
   document.querySelectorAll('.opt.sel').forEach(o=>o.classList.remove('sel'));
-  document.querySelectorAll('.btn.primary[disabled], .btn.primary').forEach(b=>{if(b.id!=='send')b.disabled=true;});
+  document.querySelectorAll('.step .btn.primary').forEach(b=>{if(b.id!=='send')b.disabled=true;});
   ['imie','tel','email'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('zgoda').checked=false; document.getElementById('send').disabled=true;
   const b=document.getElementById('send'); b.innerHTML='<span id="sendlbl">Wyślij zgłoszenie</span>';
