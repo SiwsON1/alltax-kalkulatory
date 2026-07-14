@@ -25,7 +25,7 @@
   .top .cnt{font-size:11px;font-weight:700;letter-spacing:.03em;background:rgba(255,255,255,.14);padding:5px 11px;border-radius:6px}
   .top p{font-size:13.5px;color:rgba(255,255,255,.8);margin-top:4px}
   .bar{height:6px;background:rgba(255,255,255,.18);border-radius:6px;margin-top:16px;overflow:hidden}
-  .bar i{display:block;height:100%;background:var(--red);border-radius:6px;transform-origin:left;transform:scaleX(.2);transition:transform .45s var(--eout)}
+  .bar i{display:block;height:100%;background:var(--red);border-radius:6px;transform-origin:left;transform:scaleX(.08);transition:transform .45s var(--eout)}
 
   .body{padding:28px 32px 26px}
   .step{display:none}
@@ -186,7 +186,8 @@ let step=1;
 function render(){
   document.querySelectorAll('.step').forEach(s=>s.classList.toggle('on', +s.dataset.step===step));
   document.getElementById('cnt').textContent = step>=5 ? 'Gotowe' : 'Krok '+step+' z 4';
-  document.getElementById('bar').style.transform='scaleX('+Math.min(1, step/4)+')';
+  const W={1:.08,2:.34,3:.6,4:.85,5:1};
+  document.getElementById('bar').style.transform='scaleX('+(W[step]||1)+')';
   document.getElementById('trust').style.display = step>=5 ? 'none':'flex';
 }
 function bindSingle(id,key){
