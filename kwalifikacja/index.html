@@ -99,6 +99,12 @@
   @keyframes draw{to{stroke-dashoffset:0}}
   @media(max-width:520px){.opts{grid-template-columns:1fr}.top,.body,.trust{padding-left:24px;padding-right:24px}}
   @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+  /* TRYB EMBED - kwiz osadzony w oknie/modalu (bez tla strony i notki) */
+  body.embed{padding:0;background:transparent;min-height:0}
+  body.embed .note{display:none}
+  body.embed .shell{max-width:none;margin:0;border-radius:0;border:none;box-shadow:none}
+  body.embed .top{padding-right:60px} /* miejsce na przycisk X modala nad licznikiem */
 </style>
 </head>
 <body>
@@ -201,6 +207,7 @@ const YEARS={
 const BACK={Niemcy:4,Holandia:5,Austria:5,Belgia:3,Norwegia:3,Dania:3};
 const DOK={Niemcy:'Lohnsteuerbescheinigung',Holandia:'Jaaropgaaf',Austria:'Lohnzettel (L16)',Belgia:'fiche 281.10',Norwegia:'sammenstillingsoppgave (årsoppgave)',Dania:'oplysningsseddel'};
 
+if(location.search.indexOf('embed')>-1) document.body.classList.add('embed');
 const answers={kraj:'',lata:[],okres:'',karta:''};
 let step=1;
 
