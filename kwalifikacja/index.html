@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>All-tax - formularz kwalifikacji zwrotu (draft)</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{ --navy:#262261; --red:#ED1C24; --text:#3A3A4C; --bg:#eef0f7; --line:#e2e4f0; --ok:#1e9e5a; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;-webkit-font-smoothing:antialiased;padding:28px 16px}
+  .note{max-width:620px;margin:0 auto 16px;font-size:12.5px;color:#7a7f95;text-align:center}
+  .card{max-width:620px;margin:0 auto;background:#fff;border-radius:6px 40px 6px 40px;box-shadow:0 10px 40px -18px rgba(38,34,97,.4);overflow:hidden}
+  .top{background:linear-gradient(135deg,var(--navy),#332d78);color:#fff;padding:26px 30px}
+  .top h1{font-size:21px;font-weight:800;margin-bottom:4px}
+  .top p{font-size:14px;color:rgba(255,255,255,.82)}
+  .bar{height:5px;background:rgba(255,255,255,.18);border-radius:99px;margin-top:16px;overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--red);width:25%;transition:width .3s ease}
+  .body{padding:28px 30px 30px}
+  .step{display:none;animation:fade .25s ease}
+  .step.on{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  h2{font-size:18px;font-weight:800;color:var(--navy);margin-bottom:4px}
+  .hint{font-size:13px;color:#7a7f95;margin-bottom:18px}
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .opt{border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;cursor:pointer;font-size:14.5px;font-weight:600;color:var(--navy);background:#fff;transition:.15s;text-align:left;display:flex;align-items:center;gap:10px}
+  .opt:hover{border-color:#c3c6e0}
+  .opt.sel{border-color:var(--navy);background:#f3f4fc}
+  .opt .flag{font-size:20px}
+  .opts.one{grid-template-columns:1fr}
+  .nav{display:flex;justify-content:space-between;align-items:center;margin-top:22px;gap:12px}
+  .btn{border:none;border-radius:99px;font-family:inherit;font-weight:700;font-size:15px;padding:13px 26px;cursor:pointer;transition:.15s}
+  .btn.primary{background:var(--red);color:#fff}
+  .btn.primary:disabled{opacity:.4;cursor:not-allowed}
+  .btn.ghost{background:transparent;color:#7a7f95;padding:13px 8px}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:13px;font-weight:600;color:var(--navy);margin-bottom:6px}
+  .field input{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;font-family:inherit;font-size:15px;color:var(--text)}
+  .field input:focus{outline:none;border-color:var(--navy)}
+  .rodo{display:flex;gap:9px;align-items:flex-start;font-size:12px;color:#7a7f95;margin:6px 0 18px}
+  .rodo input{margin-top:2px}
+  .result-badge{display:inline-flex;align-items:center;gap:8px;background:#e8f7ef;color:var(--ok);font-weight:700;font-size:13px;padding:7px 14px;border-radius:99px;margin-bottom:14px}
+  .done{text-align:center;padding:20px 6px}
+  .done .ok{width:64px;height:64px;border-radius:50%;background:#e8f7ef;color:var(--ok);display:grid;place-items:center;margin:0 auto 16px;font-size:32px}
+  .done h2{margin-bottom:8px}
+  .done p{color:#6a6f83;font-size:14.5px;max-width:380px;margin:0 auto}
+  @media(max-width:520px){.opts{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="note">Wersja robocza. Do osadzenia na podstronach usług (np. „zwrot podatku z Niemiec") jako formularz kontaktowy. Na stronie all-tax zgłoszenie trafia mailem do biura / do formularza (CF7).</div>
+<div class="card">
+  <div class="top">
+    <h1>Sprawdź bezpłatnie swój zwrot</h1>
+    <p>Kilka pytań i oddzwonimy, jeśli warto się rozliczyć. Bez zobowiązań.</p>
+    <div class="bar"><i id="bar"></i></div>
+  </div>
+  <div class="body">
+
+    <!-- KROK 1 -->
+    <div class="step on" data-step="1">
+      <h2>W którym kraju pracowałeś?</h2>
+      <p class="hint">Wybierz kraj, z którego chcesz odzyskać podatek.</p>
+      <div class="opts" id="kraje">
+        <div class="opt" data-v="Niemcy"><span class="flag">🇩🇪</span> Niemcy</div>
+        <div class="opt" data-v="Holandia"><span class="flag">🇳🇱</span> Holandia</div>
+        <div class="opt" data-v="Austria"><span class="flag">🇦🇹</span> Austria</div>
+        <div class="opt" data-v="Belgia"><span class="flag">🇧🇪</span> Belgia</div>
+        <div class="opt" data-v="Norwegia"><span class="flag">🇳🇴</span> Norwegia</div>
+        <div class="opt" data-v="Dania"><span class="flag">🇩🇰</span> Dania</div>
+      </div>
+      <div class="nav"><span></span><button class="btn primary" disabled onclick="next()">Dalej</button></div>
+    </div>
+
+    <!-- KROK 2 -->
+    <div class="step" data-step="2">
+      <h2>Za jakie lata chcesz się rozliczyć?</h2>
+      <p class="hint">Zwrot można odzyskać nawet do 4 lat wstecz. Zaznacz wszystkie, które Cię dotyczą.</p>
+      <div class="opts" id="lata">
+        <div class="opt" data-v="2025">2025</div>
+        <div class="opt" data-v="2024">2024</div>
+        <div class="opt" data-v="2023">2023</div>
+        <div class="opt" data-v="2022">2022</div>
+        <div class="opt" data-v="Nie wiem">Nie jestem pewien</div>
+      </div>
+      <div class="nav"><button class="btn ghost" onclick="prev()">Wstecz</button><button class="btn primary" disabled onclick="next()">Dalej</button></div>
+    </div>
+
+    <!-- KROK 3 -->
+    <div class="step" data-step="3">
+      <h2>Masz kartę podatkową od pracodawcy?</h2>
+      <p class="hint">To np. Lohnsteuerbescheinigung, Jaaropgaaf, lønnsoppgave. Jeśli nie masz, też pomożemy ją odzyskać.</p>
+      <div class="opts one" id="karta">
+        <div class="opt" data-v="Tak">Tak, mam kartę / karty podatkowe</div>
+        <div class="opt" data-v="Nie">Nie mam, potrzebuję pomocy w odzyskaniu</div>
+        <div class="opt" data-v="Nie wiem">Nie wiem, co to jest</div>
+      </div>
+      <div class="nav"><button class="btn ghost" onclick="prev()">Wstecz</button><button class="btn primary" disabled onclick="next()">Zobacz wynik</button></div>
+    </div>
+
+    <!-- KROK 4: wynik + kontakt -->
+    <div class="step" data-step="4">
+      <span class="result-badge">✓ Wygląda na to, że warto się rozliczyć</span>
+      <h2>Zostaw kontakt, sprawdzimy to bezpłatnie</h2>
+      <p class="hint">Oddzwonimy w ciągu 24h i powiemy, ile realnie możesz odzyskać. Bez opłat z góry.</p>
+      <div class="field"><label>Imię</label><input id="imie" type="text" placeholder="Jan"></div>
+      <div class="field"><label>Telefon</label><input id="tel" type="tel" placeholder="600 000 000"></div>
+      <div class="field"><label>E-mail (opcjonalnie)</label><input id="email" type="email" placeholder="jan@example.com"></div>
+      <label class="rodo"><input type="checkbox" id="zgoda"> Wyrażam zgodę na kontakt w sprawie rozliczenia podatku i akceptuję politykę prywatności.</label>
+      <div class="nav"><button class="btn ghost" onclick="prev()">Wstecz</button><button class="btn primary" id="send" disabled onclick="submitForm()">Wyślij zgłoszenie</button></div>
+    </div>
+
+    <!-- KROK 5: podziekowanie -->
+    <div class="step" data-step="5">
+      <div class="done">
+        <div class="ok">✓</div>
+        <h2>Dziękujemy, zgłoszenie przyjęte</h2>
+        <p id="doneMsg">Skontaktujemy się z Tobą w ciągu 24h. Do usłyszenia.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const answers={kraj:'',lata:[],karta:''};
+let step=1;
+function show(){
+  document.querySelectorAll('.step').forEach(s=>s.classList.toggle('on', +s.dataset.step===step));
+  document.getElementById('bar').style.width=(step/4*100)+'%';
+}
+// single-select kraj + karta
+function bindSingle(id,key){
+  document.querySelectorAll('#'+id+' .opt').forEach(o=>o.onclick=()=>{
+    document.querySelectorAll('#'+id+' .opt').forEach(x=>x.classList.remove('sel'));
+    o.classList.add('sel'); answers[key]=o.dataset.v;
+    o.closest('.step').querySelector('.btn.primary').disabled=false;
+  });
+}
+bindSingle('kraje','kraj'); bindSingle('karta','karta');
+// multi lata
+document.querySelectorAll('#lata .opt').forEach(o=>o.onclick=()=>{
+  o.classList.toggle('sel');
+  answers.lata=[...document.querySelectorAll('#lata .opt.sel')].map(x=>x.dataset.v);
+  document.querySelector('.step[data-step="2"] .btn.primary').disabled=answers.lata.length===0;
+});
+function next(){ if(step<4){step++;show();} }
+function prev(){ if(step>1){step--;show();} }
+// walidacja kontaktu
+['imie','tel','zgoda'].forEach(id=>{
+  const el=document.getElementById(id);
+  el.addEventListener('input',valid); el.addEventListener('change',valid);
+});
+function valid(){
+  const ok=document.getElementById('imie').value.trim() && document.getElementById('tel').value.trim() && document.getElementById('zgoda').checked;
+  document.getElementById('send').disabled=!ok;
+}
+function submitForm(){
+  // NA STRONIE ALL-TAX: tu formularz wysyla maila do biura / POST do CF7 / webhook do n8n.
+  // W drafcie tylko symulacja + podsumowanie zebranych danych.
+  const d=answers, imie=document.getElementById('imie').value.trim();
+  document.getElementById('doneMsg').textContent='Dziekujemy '+imie+'. Skontaktujemy sie w ciagu 24h w sprawie zwrotu z: '+d.kraj+'.';
+  step=5; document.getElementById('bar').style.width='100%';
+  document.querySelectorAll('.step').forEach(s=>s.classList.toggle('on', +s.dataset.step===5));
+  console.log('ZGLOSZENIE (do wyslania mailem):', JSON.stringify(d));
+}
+show();
+</script>
+</body>
+</html>
