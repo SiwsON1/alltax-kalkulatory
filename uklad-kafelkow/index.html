@@ -5,67 +5,64 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
 <title>All-tax - układ kafelków "Dla pracujących w" (mockup)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --navy:#262261; --red:#ED1C24; --ink:#2b2b3a; --muted:#6a6f83;
-    --bg:#eef0f7; --card:#fff; --line:#e4e6f0;
-    --shadow:0 18px 40px -20px rgba(38,34,97,.35);
-  }
+  :root{ --navy:#262261; --red:#ED1C24; --dark:#262261; --text-dark:#3A3A4C; --muted:#6a6f83; --bg:#f4f5fb; }
   *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased}
+  body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--text-dark);line-height:1.5;-webkit-font-smoothing:antialiased}
   .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
   header{background:linear-gradient(135deg,var(--navy),#332d78);color:#fff;padding:40px 0 46px}
   header .tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;background:rgba(255,255,255,.14);padding:6px 12px;border-radius:99px;margin-bottom:14px}
   header h1{font-size:26px;font-weight:800;margin-bottom:8px}
-  header p{color:rgba(255,255,255,.82);max-width:680px;font-size:15px}
-  .opt{padding:40px 0 8px}
-  .opt-head{display:flex;align-items:baseline;gap:12px;margin-bottom:6px}
+  header p{color:rgba(255,255,255,.82);max-width:700px;font-size:15px}
+  .opt{padding:44px 0 10px}
+  .opt.alt{background:#fff;border-top:1px solid #e7e8f2;border-bottom:1px solid #e7e8f2}
+  .opt-head{display:flex;align-items:center;gap:12px;margin-bottom:4px}
   .opt-head .n{font-size:13px;font-weight:800;color:#fff;background:var(--navy);width:26px;height:26px;border-radius:50%;display:grid;place-items:center;flex:none}
   .opt-head.bad .n{background:var(--red)}
   .opt-head h2{font-size:20px;font-weight:800;color:var(--navy)}
-  .opt > .wrap > .desc{color:var(--muted);font-size:14px;margin:2px 0 22px 38px;max-width:720px}
-  .opt.alt{background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .opt-head .rec{font-size:11px;font-weight:800;color:#fff;background:var(--red);padding:4px 10px;border-radius:99px}
+  .opt > .wrap > .desc{color:var(--muted);font-size:14px;margin:2px 0 24px 38px;max-width:740px}
 
-  /* KARTA all-tax */
+  /* ===== KARTA all-tax 1:1 (#oferta) ===== */
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:26px}
-  .card{background:var(--card);border-radius:6px 46px 6px 46px;box-shadow:var(--shadow);overflow:hidden;display:flex;min-height:190px}
-  .card .ph{flex:none;width:180px;position:relative;background:#dfe2ef}
-  .card .ph img{width:100%;height:100%;object-fit:cover;display:block}
-  .card .ph::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 60%,rgba(255,255,255,.9))}
-  .card .body{padding:22px 24px;display:flex;flex-direction:column;gap:12px}
-  .card h3{font-size:18px;font-weight:800;color:var(--ink);line-height:1.25}
-  .card h3 span{color:var(--red)}
-  .card ul{list-style:none;display:flex;flex-direction:column;gap:7px}
-  .card li{font-size:13.5px;color:var(--muted);padding-left:24px;position:relative}
-  .card li::before{content:"";position:absolute;left:0;top:5px;width:15px;height:15px;border-radius:50%;background:var(--navy);
-    -webkit-mask:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'><path d='M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z'/></svg>") center/11px no-repeat;
-    mask:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'><path d='M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z'/></svg>") center/11px no-repeat}
+  .ofcard{background:#fff;border-radius:0 90px 0 90px;box-shadow:0 2px 18px rgba(0,0,0,.06);overflow:hidden}
+  .ofcard .content{display:flex;min-height:320px}
+  .ofcard .img{width:40%;flex:none}
+  .ofcard .img img{width:100%;height:100%;object-fit:cover;display:block}
+  .ofcard .cont{width:60%;padding:40px 24px 24px}
+  .ofcard h4{font-size:22px;line-height:1.4;margin-bottom:20px;font-weight:400;color:var(--text-dark)}
+  .ofcard h4 .country{display:block;white-space:nowrap;font-weight:800;font-size:28px;color:var(--dark)}
+  .ofcard ul{list-style:none;padding-left:0}
+  .ofcard li{margin-bottom:2px}
+  .ofcard li::before{content:"\2713";color:var(--red);font-weight:800;font-size:15px;display:inline-block;margin-right:10px}
+  .ofcard li a{color:var(--text-dark);font-weight:600;text-decoration:none;font-size:15px}
+  @media(max-width:1440px){ .ofcard h4{font-size:20px} .ofcard h4 .country{font-size:26px} }
 
-  /* wariant: karta CTA (6. kafelek) */
-  .card.cta{background:linear-gradient(135deg,var(--navy),#3a3486);color:#fff;align-items:center;justify-content:center;text-align:center;padding:26px}
-  .card.cta .ph{display:none}
-  .card.cta .body{align-items:center}
-  .card.cta h3{color:#fff}
-  .card.cta p{font-size:13.5px;color:rgba(255,255,255,.8);max-width:280px}
-  .card.cta a{margin-top:6px;background:var(--red);color:#fff;text-decoration:none;font-weight:700;font-size:14px;padding:11px 22px;border-radius:99px;display:inline-block}
+  /* karta CTA w tym samym ksztalcie */
+  .ofcard.cta{background:linear-gradient(135deg,var(--navy),#3a3486)}
+  .ofcard.cta .content{align-items:center;justify-content:center;text-align:center;padding:36px 30px;min-height:320px;flex-direction:column;gap:14px}
+  .ofcard.cta h4{color:#fff;font-weight:800;font-size:23px;margin:0}
+  .ofcard.cta p{color:rgba(255,255,255,.82);font-size:14.5px;max-width:300px}
+  .ofcard.cta a{background:var(--red);color:#fff;text-decoration:none;font-weight:700;font-size:15px;padding:13px 28px;border-radius:99px}
 
-  /* wariant B: ostatnia karta na calą szerokosc */
-  .grid.bento .card.wide{grid-column:1 / -1;align-items:center}
-  .grid.bento .card.wide .ph{width:320px}
-  .grid.bento .card.wide .body{flex:1;flex-direction:row;align-items:center;justify-content:space-between;gap:24px}
-  .grid.bento .card.wide .body .txt{display:flex;flex-direction:column;gap:10px}
-  .grid.bento .card.wide .wcta{flex:none;background:var(--red);color:#fff;text-decoration:none;font-weight:700;font-size:14px;padding:13px 26px;border-radius:99px;white-space:nowrap}
+  /* wariant B: szeroka karta */
+  .grid.bento .ofcard.wide{grid-column:1 / -1}
+  .grid.bento .ofcard.wide .img{width:34%}
+  .grid.bento .ofcard.wide .cont{width:66%;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+  .grid.bento .ofcard.wide .txt{flex:1;min-width:260px}
+  .grid.bento .ofcard.wide .wcta{flex:none;background:var(--red);color:#fff;text-decoration:none;font-weight:700;font-size:15px;padding:14px 30px;border-radius:99px;white-space:nowrap}
 
   /* wariant C: wysrodkowany ostatni rzad */
-  .grid.centered{display:flex;flex-wrap:wrap;justify-content:center}
-  .grid.centered .card{flex:1 1 calc(50% - 13px);min-width:340px;max-width:560px}
+  .grid.centered{display:flex;flex-wrap:wrap;justify-content:center;gap:26px}
+  .grid.centered .ofcard{flex:1 1 calc(50% - 13px);min-width:360px;max-width:560px}
 
   @media(max-width:820px){
     .grid,.grid.centered{grid-template-columns:1fr;display:grid}
-    .card{flex-direction:column}
-    .card .ph{width:100%;height:150px}
-    .card .ph::after{background:linear-gradient(0deg,transparent 55%,rgba(255,255,255,.85))}
-    .grid.bento .card.wide .ph{width:100%}
+    .ofcard .content,.grid.bento .ofcard.wide .cont{flex-direction:column}
+    .ofcard .img,.grid.bento .ofcard.wide .img{width:100%;height:180px}
+    .ofcard .cont,.grid.bento .ofcard.wide .cont{width:100%}
   }
   footer{padding:36px 0 60px;color:var(--muted);font-size:13px;text-align:center}
 </style>
@@ -74,56 +71,53 @@
 <header><div class="wrap">
   <span class="tag">Mockup / podgląd roboczy</span>
   <h1>Sekcja „Dla pracujących w [kraj]" po usunięciu UK</h1>
-  <p>Po zdjęciu Wielkiej Brytanii zostaje 5 kartek, więc siatka 2-kolumnowa robi się nieparzysta (ostatnia karta sama). Poniżej stan obecny i 3 warianty naprawy. Nic z tego nie jest wgrane na żywą stronę.</p>
+  <p>Karty odwzorowane 1:1 ze stylu all-tax (ten sam kształt, cień, układ zdjęcie 40% / tekst 60%, checklisty). Po zdjęciu UK zostaje 5 kartek, siatka robi się nieparzysta. Poniżej 3 warianty. Nic z tego nie jest na żywej stronie.</p>
 </div></header>
 
-<!-- TERAZ -->
 <section class="opt"><div class="wrap">
-  <div class="opt-head bad"><span class="n">!</span><h2>Teraz (problem) — 5 kartek, Polska sama w rzędzie</h2></div>
-  <p class="desc">Tak wygląda sekcja w tej chwili: 4 kartki w dwóch równych rzędach i Polska wisząca sama po lewej.</p>
+  <div class="opt-head bad"><span class="n">!</span><h2>Teraz (problem) — Polska sama w rzędzie</h2></div>
+  <p class="desc">4 kartki w dwóch rzędach i Polska wisząca sama po lewej.</p>
   <div class="grid" id="g-now"></div>
 </div></section>
 
-<!-- OPCJA A -->
 <section class="opt alt"><div class="wrap">
-  <div class="opt-head"><span class="n">A</span><h2>Dodaj 6. kartę: bezpłatna konsultacja <em style="font-style:normal;font-size:12px;font-weight:800;color:#fff;background:var(--red);padding:3px 10px;border-radius:99px;vertical-align:middle;margin-left:6px">REKOMENDACJA</em></h2></div>
-  <p class="desc">Wraca równa siatka 3×2. Puste miejsce po UK wypełnia karta CTA, która dodatkowo zbiera kontakty (wartość konwersyjna, nie tylko wypełniacz).</p>
+  <div class="opt-head"><span class="n">A</span><h2>Dodaj 6. kartę: bezpłatna konsultacja</h2><span class="rec">REKOMENDACJA</span></div>
+  <p class="desc">Równa siatka 3×2 wraca. Puste miejsce po UK wypełnia karta CTA, która dodatkowo zbiera kontakty.</p>
   <div class="grid" id="g-a"></div>
 </div></section>
 
-<!-- OPCJA B -->
 <section class="opt"><div class="wrap">
-  <div class="opt-head"><span class="n">B</span><h2>Ostatnia karta na całą szerokość (układ bento)</h2></div>
-  <p class="desc">4 kartki w dwóch rzędach, a Polska jako szeroka karta na dole. Nic nie wisi w połowie, wygląda celowo.</p>
+  <div class="opt-head"><span class="n">B</span><h2>Ostatnia karta na całą szerokość (bento)</h2></div>
+  <p class="desc">4 kartki w dwóch rzędach, Polska jako szeroka karta na dole. Nic nie wisi w połowie.</p>
   <div class="grid bento" id="g-b"></div>
 </div></section>
 
-<!-- OPCJA C -->
 <section class="opt alt"><div class="wrap">
   <div class="opt-head"><span class="n">C</span><h2>Wyśrodkowany ostatni rząd</h2></div>
-  <p class="desc">Zostają 2 kolumny, ale ostatnia kartka (Polska) jest wyśrodkowana zamiast dociśnięta do lewej. Najmniejsza zmiana.</p>
+  <p class="desc">Najmniejsza zmiana: Polska wyśrodkowana zamiast dociśnięta do lewej.</p>
   <div class="grid centered" id="g-c"></div>
 </div></section>
 
-<footer><div class="wrap">All-tax - mockup układu sekcji. Wersja robocza, nie stanowi wersji produkcyjnej.</div></footer>
+<footer><div class="wrap">All-tax - mockup układu sekcji. Wersja robocza.</div></footer>
 
 <script>
+const B='https://all-tax.pl/wp-content/uploads/2025/06/';
 const DATA=[
- {kraj:'Niemczech',img:'https://all-tax.pl/wp-content/uploads/2025/06/zwrot-podatku-niemcy.jpg',s:['Zwrot podatku z Niemiec','Zasiłek rodzinny Kindergeld','Świadczenie urlopowe z SOKA-BAU','Odzyskanie karty podatkowej','Zgłoszenie konta bankowego']},
- {kraj:'Holandii',img:'https://all-tax.pl/wp-content/uploads/2025/06/zwrot-podatku-holandia.jpg',s:['Zwrot podatku z Holandii','Odzyskanie karty Jaaropgave','Zorgtoeslag - zwrot dodatku','Kinderbijslag - zasiłek rodzinny','Telefon do urzędu','Zgłoszenie konta bankowego']},
- {kraj:'Austrii',img:'https://all-tax.pl/wp-content/uploads/2025/06/zwrot-podatku-austria.jpg',s:['Zwrot podatku z Austrii']},
- {kraj:'Belgii',img:'https://all-tax.pl/wp-content/uploads/2025/06/zwrot-podatku-belgia.jpg',s:['Zwrot podatku z Belgii','Kinderbijslag - zasiłek rodzinny']},
- {kraj:'Polsce',img:'https://all-tax.pl/wp-content/uploads/2025/06/zwrot-podatku-polska.jpg',s:['Zwrot podatku z Polski']},
+ {k:'Niemczech',img:'zwrot-podatku-niemcy.jpg',s:['Zwrot podatku z Niemiec','Zasiłek rodzinny Kindergeld','Świadczenie urlopowe z SOKA-BAU','Odzyskanie karty podatkowej z Niemiec','Zgłoszenie konta bankowego']},
+ {k:'Holandii',img:'zwrot-podatku-holandia.jpg',s:['Zwrot podatku z Holandii','Odzyskanie karty podatkowej Jaaropgave','Zorgtoeslag - zwrot dodatku','Kinderbijslag - zasiłek rodzinny','Telefon do urzędu holenderskiego','Zgłoszenie konta bankowego']},
+ {k:'Austrii',img:'zwrot-podatku-austria.jpg',s:['Zwrot podatku z Austrii']},
+ {k:'Belgii',img:'zwrot-podatku-belgia.jpg',s:['Zwrot podatku z Belgii','Kinderbijslag - zasiłek rodzinny w Belgii']},
+ {k:'Polsce',img:'zwrot-podatku-polska.jpg',s:['Zwrot podatku z Polski']},
 ];
 function card(d,cls){
-  return `<article class="card ${cls||''}"><div class="ph"><img src="${d.img}" alt="Dla pracujących w ${d.kraj}" loading="lazy"></div>`+
-   `<div class="body"><h3>Dla pracujących <span>w ${d.kraj}</span></h3>`+
-   `<ul>${d.s.map(x=>`<li>${x}</li>`).join('')}</ul></div></article>`;
+  return `<article class="ofcard ${cls||''}"><div class="content"><div class="img"><img src="${B}${d.img}" alt="Dla pracujących w ${d.k}" loading="lazy"></div>`+
+   `<div class="cont"><h4>Dla pracujących <span class="country">w ${d.k}</span></h4>`+
+   `<ul>${d.s.map(x=>`<li><a href="#">${x}</a></li>`).join('')}</ul></div></div></article>`;
 }
-const cta=`<article class="card cta"><div class="body"><h3>Nie wiesz, co Ci przysługuje?</h3><p>Sprawdzimy bezpłatnie z jakiego kraju i jaki zwrot możesz odzyskać.</p><a href="#">Bezpłatna konsultacja</a></div></article>`;
+const cta=`<article class="ofcard cta"><div class="content"><h4>Nie wiesz, co Ci przysługuje?</h4><p>Sprawdzimy bezpłatnie z jakiego kraju i jaki zwrot możesz odzyskać.</p><a href="#">Bezpłatna konsultacja</a></div></article>`;
+const wide=`<article class="ofcard wide"><div class="content"><div class="img"><img src="${B}zwrot-podatku-polska.jpg" alt="Dla pracujących w Polsce" loading="lazy"></div><div class="cont"><div class="txt"><h4>Dla pracujących <span class="country">w Polsce</span></h4><ul><li><a href="#">Zwrot podatku z Polski (PIT)</a></li><li><a href="#">Rozliczenie roczne PIT-37 / PIT-36</a></li></ul></div><a class="wcta" href="#">Rozlicz PIT</a></div></div></article>`;
 document.getElementById('g-now').innerHTML=DATA.map(d=>card(d)).join('');
 document.getElementById('g-a').innerHTML=DATA.map(d=>card(d)).join('')+cta;
-const wide=`<article class="card wide"><div class="ph"><img src="${DATA[4].img}" alt="Dla pracujących w Polsce" loading="lazy"></div><div class="body"><div class="txt"><h3>Dla pracujących <span>w Polsce</span></h3><ul><li>Zwrot podatku z Polski (PIT)</li><li>Rozliczenie roczne PIT-37 / PIT-36</li></ul></div><a class="wcta" href="#">Rozlicz PIT</a></div></article>`;
 document.getElementById('g-b').innerHTML=DATA.slice(0,4).map(d=>card(d)).join('')+wide;
 document.getElementById('g-c').innerHTML=DATA.map(d=>card(d)).join('');
 </script>
