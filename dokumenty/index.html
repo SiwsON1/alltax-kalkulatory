@@ -4,13 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>All-tax - wyślij dokumenty do rozliczenia (draft)</title>
+<title>All-tax - bezpieczny upload dokumentów (draft)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
     --navy:#262261; --navy2:#3a3486; --red:#ED1C24; --text:#3A3A4C; --muted:#7a7f95;
-    --line:#e4e6f2; --line2:#eef0f7; --ok:#1e9e5a; --okbg:#e8f7ef; --amber:#b06f16; --amberbg:#fbf0e2;
+    --line:#e4e6f2; --line2:#eef0f7; --ok:#1e9e5a; --okbg:#e8f7ef; --amber:#b06f16; --amberbg:#fbf0e2; --err:#c8232b;
     --eout:cubic-bezier(.23,1,.32,1);
   }
   *{box-sizing:border-box;margin:0;padding:0}
@@ -19,17 +19,36 @@
   .shell{max-width:660px;margin:0 auto;background:#fff;border-radius:12px;box-shadow:0 18px 48px -26px rgba(38,34,97,.4);overflow:hidden;border:1px solid #e9eaf3}
 
   /* HEADER */
-  .top{background:var(--navy);color:#fff;padding:24px 32px 22px}
-  .top h1{font-size:20px;font-weight:800}
-  .top p{font-size:13.5px;color:rgba(255,255,255,.8);margin-top:4px}
+  .top{background:var(--navy);color:#fff;padding:22px 32px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .top h1{font-size:19px;font-weight:800}
+  .top p{font-size:13px;color:rgba(255,255,255,.78);margin-top:3px}
+  .lock{flex:none;display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.12);border-radius:999px;padding:6px 12px;font-size:11.5px;font-weight:700;color:#fff}
+  .lock svg{width:13px;height:13px;stroke:#8fe3b0;stroke-width:2.2;fill:none}
+
+  /* BRAMA DOSTEPU */
+  .gate{padding:30px 32px 34px;max-width:420px;margin:0 auto;text-align:center}
+  .gate .shield{width:56px;height:56px;border-radius:15px;background:#f0eef9;display:grid;place-items:center;margin:0 auto 16px}
+  .gate .shield svg{width:26px;height:26px;stroke:var(--navy);stroke-width:1.9;fill:none}
+  .gate h2{font-size:19px;font-weight:800;color:var(--navy);margin-bottom:6px}
+  .gate p{font-size:13.5px;color:var(--muted);margin-bottom:20px}
+  .gate .fld{text-align:left;margin-bottom:12px}
+  .gate label{display:block;font-size:12px;font-weight:700;color:var(--navy);margin-bottom:6px}
+  .inp{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:13px 14px;font-family:inherit;font-size:15px;color:var(--text);transition:border-color .18s var(--eout),box-shadow .18s var(--eout)}
+  .inp:focus{outline:none;border-color:var(--navy);box-shadow:0 0 0 4px rgba(38,34,97,.09)}
+  .btn{width:100%;border:none;border-radius:8px;background:var(--red);color:#fff;font-family:inherit;font-weight:700;font-size:14px;letter-spacing:.02em;padding:14px;cursor:pointer;transition:transform .14s var(--eout),filter .2s var(--eout)}
+  .btn:hover{filter:brightness(1.07)} .btn:active{transform:scale(.98)}
+  .btn:disabled{opacity:.4;cursor:not-allowed;filter:none}
+  .gate .demo{font-size:11.5px;color:#a7abbe;margin-top:14px;line-height:1.5}
+  .gate .code-row{display:none} .gate.step2 .code-row{display:block} .gate.step2 .send-code{display:none}
 
   /* WYBOR KRAJU */
+  .wrap{display:none}
   .country{padding:20px 32px 6px}
   .country .lbl{font-size:12px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
   .flags{display:flex;flex-wrap:wrap;gap:8px}
-  .flag{border:1.5px solid var(--line);border-radius:999px;padding:8px 15px 8px 12px;background:#fff;cursor:pointer;font-size:13.5px;font-weight:600;color:var(--navy);
-    display:inline-flex;align-items:center;gap:8px;transition:border-color .16s var(--eout),background .16s var(--eout),transform .1s var(--eout),box-shadow .16s var(--eout)}
-  .flag span{font-size:17px;line-height:1}
+  .flag{border:1.5px solid var(--line);border-radius:999px;padding:7px 15px 7px 9px;background:#fff;cursor:pointer;font-size:13.5px;font-weight:600;color:var(--navy);
+    display:inline-flex;align-items:center;gap:9px;transition:border-color .16s var(--eout),background .16s var(--eout),transform .1s var(--eout),box-shadow .16s var(--eout)}
+  .flag img{width:22px;height:15px;object-fit:cover;border-radius:3px;box-shadow:0 0 0 1px rgba(38,34,97,.08);display:block}
   @media(hover:hover){.flag:hover{border-color:#c3c6e0}}
   .flag:active{transform:scale(.97)}
   .flag.sel{border-color:var(--navy);background:#f4f5fd;box-shadow:0 5px 14px -8px rgba(38,34,97,.4)}
@@ -40,12 +59,10 @@
   .prog .track i{display:block;height:100%;background:var(--ok);border-radius:6px;width:0;transition:width .45s var(--eout)}
   .prog .cnt{font-size:12.5px;font-weight:700;color:var(--navy);white-space:nowrap}
 
-  /* SEKCJE DOKUMENTOW */
+  /* DOKUMENTY */
   .docs{padding:14px 32px 8px}
   .grp-title{font-size:12px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);margin:16px 0 9px}
   .grp-title:first-child{margin-top:6px}
-
-  /* WIERSZ DOKUMENTU (lista, nie siatka kart) */
   .doc{display:flex;align-items:flex-start;gap:14px;padding:15px 0;border-top:1px solid var(--line2)}
   .doc:first-of-type{border-top:none}
   .doc .status{flex:none;width:30px;height:30px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;margin-top:1px;transition:border-color .2s var(--eout),background .2s var(--eout)}
@@ -58,20 +75,18 @@
   .tag.req{background:#f0eef9;color:var(--navy)}
   .tag.opt{background:var(--amberbg);color:var(--amber)}
   .doc .desc{font-size:12.5px;color:var(--muted);margin-top:3px;line-height:1.5}
+  .doc .err{font-size:12px;color:var(--err);font-weight:600;margin-top:9px;display:none}
+  .doc.invalid .err{display:block}
 
-  /* DROPZONE / UPLOAD */
-  .drop{margin-top:10px;border:1.5px dashed #cdd0e6;border-radius:9px;padding:10px 13px;display:flex;align-items:center;gap:10px;cursor:pointer;background:#fbfbfe;
-    transition:border-color .18s var(--eout),background .18s var(--eout)}
+  /* DROPZONE / PLIK */
+  .drop{margin-top:10px;border:1.5px dashed #cdd0e6;border-radius:9px;padding:10px 13px;display:flex;align-items:center;gap:10px;cursor:pointer;background:#fbfbfe;transition:border-color .18s var(--eout),background .18s var(--eout)}
   @media(hover:hover){.drop:hover{border-color:var(--navy);background:#f4f5fd}}
   .drop.over{border-color:var(--navy);background:#eef0fb}
   .drop .ic{flex:none;width:28px;height:28px;border-radius:7px;background:#eceefb;display:grid;place-items:center}
   .drop .ic svg{width:15px;height:15px;stroke:var(--navy);stroke-width:2;fill:none}
   .drop .txt{font-size:12.5px;color:var(--text);line-height:1.3}
-  .drop .txt b{color:var(--navy);font-weight:700}
-  .drop .txt span{color:var(--muted);font-size:11.5px}
-
-  /* WGRANY PLIK */
-  .file{margin-top:11px;border:1.5px solid var(--line);border-radius:10px;padding:11px 13px;display:flex;align-items:center;gap:11px;background:#fff;animation:pop .35s var(--eout) both}
+  .drop .txt b{color:var(--navy);font-weight:700} .drop .txt span{color:var(--muted);font-size:11.5px}
+  .file{margin-top:10px;border:1.5px solid var(--line);border-radius:10px;padding:11px 13px;display:flex;align-items:center;gap:11px;background:#fff;animation:pop .35s var(--eout) both}
   .file .fic{flex:none;width:34px;height:34px;border-radius:8px;background:var(--okbg);display:grid;place-items:center}
   .file .fic svg{width:17px;height:17px;stroke:var(--ok);stroke-width:2.2;fill:none}
   .file .fname{flex:1;min-width:0;font-size:13px;font-weight:600;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -80,22 +95,20 @@
   .file .del:hover{background:#faeaea;color:var(--red)}
   .file .del svg{width:15px;height:15px;stroke:currentColor;stroke-width:2.2;fill:none}
 
-  /* STOPKA / BEZPIECZ + WYSLIJ */
+  /* STOPKA */
   .foot{padding:8px 32px 26px}
-  .secure{display:flex;gap:10px;align-items:flex-start;background:#f7f8fd;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--muted);line-height:1.5;margin:14px 0 16px}
+  .secure{display:flex;gap:10px;align-items:flex-start;background:#f7f8fd;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--muted);line-height:1.5;margin:14px 0 14px}
   .secure svg{flex:none;width:16px;height:16px;stroke:var(--navy);stroke-width:2;fill:none;margin-top:1px}
-  .send{width:100%;border:none;border-radius:6px;background:var(--red);color:#fff;font-family:inherit;font-weight:700;font-size:14px;letter-spacing:.03em;text-transform:uppercase;padding:16px;cursor:pointer;
-    display:inline-flex;align-items:center;justify-content:center;gap:10px;transition:transform .14s var(--eout),filter .2s var(--eout)}
-  .send:hover{filter:brightness(1.07)}
-  .send:active{transform:scale(.98)}
+  .rodo{display:flex;gap:9px;align-items:flex-start;font-size:11.5px;color:var(--muted);margin:0 0 15px;cursor:pointer;line-height:1.5}
+  .rodo input{margin-top:2px;accent-color:var(--navy);flex:none;width:15px;height:15px}
+  .send{width:100%;border:none;border-radius:6px;background:var(--red);color:#fff;font-family:inherit;font-weight:700;font-size:14px;letter-spacing:.03em;text-transform:uppercase;padding:16px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:10px;transition:transform .14s var(--eout),filter .2s var(--eout)}
+  .send:hover{filter:brightness(1.07)} .send:active{transform:scale(.98)}
   .send:disabled{opacity:.4;cursor:not-allowed;filter:none}
   .send .spin{width:16px;height:16px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
 
-  /* EMPTY (bez kraju) */
-  .empty{padding:34px 32px 40px;text-align:center;color:var(--muted);font-size:14px}
+  .empty{padding:32px 32px 40px;text-align:center;color:var(--muted);font-size:14px}
   .empty svg{width:40px;height:40px;stroke:#c3c6e0;stroke-width:1.6;fill:none;margin-bottom:12px}
 
-  /* SUKCES */
   .done-screen{padding:34px 32px 40px;text-align:center;display:none}
   .done-screen.on{display:block}
   .done-screen .mark{width:74px;height:74px;border-radius:50%;background:var(--okbg);display:grid;place-items:center;margin:0 auto 18px;animation:pop .5s var(--eout) both}
@@ -109,49 +122,58 @@
   @keyframes draw{to{stroke-dashoffset:0}}
   .fade{animation:fade .35s var(--eout) both}
   @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-  @media(max-width:520px){.top,.country,.prog,.docs,.foot,.empty,.done-screen{padding-left:22px;padding-right:22px}}
+  @media(max-width:520px){.top,.country,.prog,.docs,.foot,.empty,.done-screen,.gate{padding-left:22px;padding-right:22px}.top{flex-direction:column;align-items:flex-start;gap:12px}}
   @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
-<div class="note">Wersja robocza (demo). Pomysł z propozycji automatyzacji: bezpieczny upload dokumentów, gdzie formularz pokazuje tylko dokumenty potrzebne dla wybranego kraju. W wersji produkcyjnej z logowaniem i szyfrowaniem, spięty ze sprawą klienta. Pliki tu nigdzie nie są wysyłane.</div>
+<div class="note">Wersja robocza (demo). Pomysł z propozycji automatyzacji: bezpieczny upload dokumentów, gdzie formularz pokazuje tylko dokumenty potrzebne dla wybranego kraju. Dostęp po zalogowaniu do sprawy, szyfrowane połączenie. Pliki tu nigdzie nie są wysyłane. Flagi i dokumenty jak na all-tax.pl.</div>
 
 <div class="shell">
   <div class="top">
-    <h1>Wyślij dokumenty do rozliczenia</h1>
-    <p>Wybierz kraj, a pokażemy dokładnie te dokumenty, których potrzebujemy.</p>
+    <div>
+      <h1>Prześlij dokumenty do rozliczenia</h1>
+      <p>Wybierz kraj, pokażemy dokładnie to, czego potrzebujemy.</p>
+    </div>
+    <span class="lock"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> Szyfrowane</span>
   </div>
 
-  <div class="country">
-    <div class="lbl">Kraj rozliczenia</div>
-    <div class="flags" id="flags">
-      <button class="flag" data-k="Niemcy"><span>🇩🇪</span> Niemcy</button>
-      <button class="flag" data-k="Holandia"><span>🇳🇱</span> Holandia</button>
-      <button class="flag" data-k="Austria"><span>🇦🇹</span> Austria</button>
-      <button class="flag" data-k="Belgia"><span>🇧🇪</span> Belgia</button>
-      <button class="flag" data-k="Norwegia"><span>🇳🇴</span> Norwegia</button>
-      <button class="flag" data-k="Dania"><span>🇩🇰</span> Dania</button>
+  <!-- BRAMA DOSTEPU -->
+  <div class="gate" id="gate">
+    <div class="shield"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+    <h2>Bezpieczny dostęp do Twojej sprawy</h2>
+    <p>Dokumentów podatkowych nie zbieramy przez otwarty formularz. Potwierdź, że to Ty, a przejdziesz do przesyłania plików.</p>
+    <div class="fld"><label>Numer sprawy lub telefon</label><input class="inp" id="gCase" type="text" placeholder="np. AT-24-1839 lub 600 000 000"></div>
+    <button class="btn send-code" id="gSend" disabled onclick="sendCode()">Wyślij kod SMS</button>
+    <div class="code-row">
+      <div class="fld" style="margin-top:2px"><label>Kod z SMS</label><input class="inp" id="gCode" type="text" inputmode="numeric" placeholder="4-cyfrowy kod" maxlength="4"></div>
+      <button class="btn" id="gEnter" disabled onclick="enter()">Wejdź do sprawy</button>
     </div>
+    <div class="demo">Demo: wpisz dowolny numer, a jako kod podaj <b>1234</b>. Tu nic nie jest wysyłane.</div>
   </div>
 
-  <div id="panel">
-    <div class="empty" id="empty">
-      <svg viewBox="0 0 24 24"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"/></svg>
-      <div>Wybierz kraj powyżej, żeby zobaczyć listę dokumentów.</div>
+  <!-- UPLOAD -->
+  <div class="wrap" id="wrap">
+    <div class="country">
+      <div class="lbl">Kraj rozliczenia</div>
+      <div class="flags" id="flags"></div>
     </div>
-
-    <div id="live" style="display:none">
-      <div class="prog">
-        <div class="track"><i id="bar"></i></div>
-        <div class="cnt" id="cnt">Wymagane: 0 z 0</div>
+    <div id="panel">
+      <div class="empty" id="empty">
+        <svg viewBox="0 0 24 24"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"/></svg>
+        <div>Wybierz kraj powyżej, żeby zobaczyć listę dokumentów.</div>
       </div>
-      <div class="docs" id="docs"></div>
-      <div class="foot">
-        <div class="secure">
-          <svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
-          <span>Twoje dokumenty przesyłamy szyfrowanym połączeniem. W wersji produkcyjnej dostęp po zalogowaniu, a pliki trafiają prosto do Twojej sprawy. Nie wysyłaj oryginałów, wystarczą czytelne zdjęcia lub skany.</span>
+      <div id="live" style="display:none">
+        <div class="prog"><div class="track"><i id="bar"></i></div><div class="cnt" id="cnt">Wymagane: 0 z 0</div></div>
+        <div class="docs" id="docs"></div>
+        <div class="foot">
+          <div class="secure">
+            <svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
+            <span>Pliki przesyłamy szyfrowanym połączeniem prosto do Twojej sprawy. Przyjmujemy JPG, PNG i PDF do 10 MB. Nie wysyłaj oryginałów, wystarczą czytelne zdjęcia lub skany.</span>
+          </div>
+          <label class="rodo"><input type="checkbox" id="zgoda"> <span>Potwierdzam, że przesyłane dokumenty są moje, i wyrażam zgodę na ich przetwarzanie w celu rozliczenia podatku zgodnie z polityką prywatności.</span></label>
+          <button class="send" id="send" disabled><span id="sendlbl">Wyślij dokumenty</span></button>
         </div>
-        <button class="send" id="send" disabled><span id="sendlbl">Wyślij dokumenty</span></button>
       </div>
     </div>
   </div>
@@ -164,99 +186,105 @@
   </div>
 </div>
 
-<input type="file" id="picker" hidden multiple accept="image/*,.pdf">
+<input type="file" id="picker" hidden accept="image/jpeg,image/png,image/*,application/pdf,.pdf">
 
 <script>
-/* Dokumenty per kraj. Dokument roczny od pracodawcy zweryfikowany (2026-07). Reszta = typowy komplet, do potwierdzenia z realnymi wymogami all-tax. */
-const LOC={Niemcy:'Niemczech',Holandia:'Holandii',Austria:'Austrii',Belgia:'Belgii',Norwegia:'Norwegii',Dania:'Danii'};
-const ROCZNY={Niemcy:'Lohnsteuerbescheinigung',Holandia:'Jaaropgaaf',Austria:'Lohnzettel (L16)',Belgia:'fiche 281.10',Norwegia:'sammenstillingsoppgave',Dania:'oplysningsseddel'};
-const EXTRA={
-  Niemcy:[
-    ['Zaświadczenie o dochodach z Polski (EU/EWR)','Potrzebne przy rozliczeniu z małżonkiem (klasa III i splitting). Druk urzędowy z polskiego US.'],
-    ['Potwierdzenie dojazdów lub drugiego mieszkania','Jeśli dojeżdżałeś do pracy albo miałeś kwaterę w Niemczech. Podnosi zwrot.']
-  ],
-  Holandia:[
-    ['Jaaropgaaf od każdego pracodawcy','Jeśli w danym roku miałeś więcej niż jednego pracodawcę, potrzebny od każdego z osobna.'],
-    ['Dane do zasiłków (zorgtoeslag, dzieci)','Jeśli chcesz sprawdzić dodatek zdrowotny lub na dzieci. To osobny wniosek od podatku.']
-  ],
-  Austria:[
-    ['Akt urodzenia dzieci','Jeśli masz dzieci, na które pobierasz zasiłek. Odblokowuje Familienbonus Plus.'],
-    ['Lohnzettel od każdego pracodawcy','Jeśli zmieniałeś pracę lub miałeś kilku pracodawców w jednym roku.']
-  ],
-  Belgia:[
-    ['Dokumenty rodzinne (dzieci, małżonek)','Jeśli masz dzieci lub niepracującego małżonka na utrzymaniu. Podnosi kwotę wolną.'],
-    ['Potwierdzenie udziału dochodu w Belgii','Pomaga wykazać regułę 75% dochodu, która odblokowuje ulgi.']
-  ],
-  Norwegia:[
-    ['Potwierdzenie wyjazdów do Polski','Bilety, potwierdzenia podróży. Podstawa ulgi pendler, jeśli masz dom lub rodzinę w Polsce.'],
-    ['Informacja o systemie rozliczenia','Czy byłeś na PAYE (25%) czy na zasadach ogólnych. Decyduje o możliwości odliczeń.']
-  ],
-  Dania:[
-    ['årsopgørelse (jeśli masz)','Roczne rozliczenie od duńskiego urzędu SKAT. Przyda się do weryfikacji danych.'],
-    ['Dokumenty rodzinne (status grænsegænger)','Jeśli chcesz pełną kwotę wolną i ulgi małżeńskie przy 75% dochodu w Danii.']
-  ]
+/* Flagi 1:1 z all-tax (DE/NL/AT/BE = ich PNG, NO/DK = flagcdn, dokladnie jak w przelaczniku all-tax). */
+const FLAG={
+  Niemcy:'https://all-tax.pl/wp-content/uploads/2023/12/flaga-niemcy.png',
+  Holandia:'https://all-tax.pl/wp-content/uploads/2023/12/flaga-holandia.png',
+  Austria:'https://all-tax.pl/wp-content/uploads/2023/12/flaga-austria.png',
+  Belgia:'https://all-tax.pl/wp-content/uploads/2023/12/flaga-belgia.png',
+  Norwegia:'https://flagcdn.com/w40/no.png',
+  Dania:'https://flagcdn.com/w40/dk.png'
 };
-function baseDocs(k){
-  return [
-    {req:true, name:'Dokument tożsamości', desc:'Dowód osobisty lub paszport. Czytelne zdjęcie obu stron.'},
-    {req:true, name:ROCZNY[k]+' (roczna karta podatkowa)', desc:'Roczne zestawienie od pracodawcy w '+LOC[k]+'. Jeśli go nie masz, zaznacz to, pomożemy je odzyskać.'},
-    {req:true, name:'Pełnomocnictwo do rozliczenia', desc:'Podpiszesz je online, bez drukowania i wysyłki pocztą.'},
+const LOC={Niemcy:'Niemczech',Holandia:'Holandii',Austria:'Austrii',Belgia:'Belgii',Norwegia:'Norwegii',Dania:'Danii'};
+/* Dokument roczny (karta podatkowa) per kraj - zweryfikowany na stronach all-tax + urzedach. */
+const ROCZNY={Niemcy:'Lohnsteuerbescheinigung',Holandia:'Jaaropgave',Austria:'Lohnzettel (L16)',Belgia:'fiche 281.10',Norwegia:'sammenstillingsoppgave',Dania:'oplysningsseddel'};
+
+/* Listy oparte na realnych wymogach all-tax (strony uslugowe) + logice zwrotu per kraj.
+   Wspolny rdzen: dowod, karta podatkowa, zaswiadczenie o dochodach z PL (druk UE/EWR), pelnomocnictwo.
+   Per kraj: Holandia dokłada konto bankowe (all-tax wymaga wprost); opcjonalne = koszty/rodzina. */
+function docsFor(k){
+  const req=[
+    {name:'Kopia dowodu osobistego lub paszportu', desc:'Czytelne zdjęcie lub skan. Potrzebne do identyfikacji w urzędzie.'},
+    {name:'Karta podatkowa: '+ROCZNY[k], desc:'Roczne zestawienie od pracodawcy w '+LOC[k]+'. Jeśli jej nie masz, zaznacz to, pomożemy Ci ją odzyskać.'},
+    {name:'Zaświadczenie o dochodach z Polski (druk UE/EWR)', desc:'Wystawia polski urząd skarbowy. Wymagane przy rozliczeniu jako osoba pracująca za granicą.'},
+    {name:'Pełnomocnictwo do rozliczenia', desc:'Podpiszesz je online, bez drukowania i wysyłki pocztą.'}
   ];
+  if(k==='Holandia') req.push({name:'Potwierdzenie numeru konta bankowego', desc:'Na to konto holenderski urząd przeleje zwrot (np. zrzut ekranu z bankowości).'});
+  const OPT={
+    Niemcy:[['Potwierdzenia poniesionych kosztów','Dojazdy do pracy, drugie mieszkanie w Niemczech. Dołącz, jeśli starasz się o ulgi, podnoszą zwrot.']],
+    Holandia:[['Dane do dodatków (zorgtoeslag, dzieci)','Jeśli chcesz sprawdzić dodatek zdrowotny lub na dzieci. To osobny wniosek od podatku.']],
+    Austria:[['Potwierdzenia kosztów lub dane dzieci','Koszty pracy albo akt urodzenia dzieci (Familienbonus Plus). Dołącz, jeśli dotyczą.']],
+    Belgia:[['Dokumenty rodzinne lub potwierdzenia kosztów','Dzieci albo niepracujący małżonek na utrzymaniu, koszty dojazdów. Podnoszą zwrot przy regule 75%.']],
+    Norwegia:[
+      ['Potwierdzenia wyjazdów do Polski','Bilety, potwierdzenia podróży. Podstawa ulgi pendler, jeśli masz dom lub rodzinę w Polsce.'],
+      ['Informacja o systemie rozliczenia','Czy byłeś rozliczany PAYE (25%) czy na zasadach ogólnych. Decyduje o możliwości odliczeń.']
+    ],
+    Dania:[['Dokumenty rodzinne lub årsopgørelse','Status grænsegænger (75% dochodu w Danii) albo roczne rozliczenie SKAT. Dołącz, jeśli masz.']]
+  };
+  const opt=(OPT[k]||[]).map(([name,desc])=>({name,desc,opt:true}));
+  return [...req.map(d=>({...d,opt:false})), ...opt];
 }
 
-let country=null; const files={}; // idx -> {name,size}
+let country=null; const files={};
 const $=s=>document.querySelector(s);
+const MAX=10*1024*1024;
 
-document.querySelectorAll('#flags .flag').forEach(f=>f.onclick=()=>{
-  document.querySelectorAll('#flags .flag').forEach(x=>x.classList.remove('sel'));
-  f.classList.add('sel'); country=f.dataset.k;
-  for(const k in files) delete files[k];
-  buildDocs();
-});
+/* ---- BRAMA ---- */
+$('#gCase').addEventListener('input',()=>{ $('#gSend').disabled = $('#gCase').value.trim().length<4; });
+$('#gCode').addEventListener('input',()=>{ $('#gEnter').disabled = $('#gCode').value.trim().length<4; });
+function sendCode(){ $('#gate').classList.add('step2'); $('#gCode').focus(); }
+function enter(){
+  $('#gate').style.display='none';
+  const w=$('#wrap'); w.style.display='block'; w.classList.add('fade');
+  buildFlags();
+}
+function buildFlags(){
+  $('#flags').innerHTML=Object.keys(FLAG).map(k=>
+    '<button class="flag" data-k="'+k+'"><img src="'+FLAG[k]+'" alt="'+k+'"> '+k+'</button>').join('');
+  document.querySelectorAll('#flags .flag').forEach(f=>f.onclick=()=>{
+    document.querySelectorAll('#flags .flag').forEach(x=>x.classList.remove('sel'));
+    f.classList.add('sel'); country=f.dataset.k; for(const k in files) delete files[k]; buildDocs();
+  });
+}
 
+/* ---- DOKUMENTY ---- */
 function buildDocs(){
   $('#empty').style.display='none';
   const live=$('#live'); live.style.display='block'; live.classList.remove('fade'); void live.offsetWidth; live.classList.add('fade');
-  const req=baseDocs(country);
-  const opt=(EXTRA[country]||[]).map(([name,desc])=>({req:false,name,desc}));
-  const all=[...req.map(d=>({...d})), ...opt.map(d=>({...d}))];
-  window.__docs=all;
-  const html = renderGroup('Wymagane', all.map((d,i)=>({d,i})).filter(x=>x.d.req))
-             + renderGroup('Jeśli dotyczy', all.map((d,i)=>({d,i})).filter(x=>!x.d.req));
-  $('#docs').innerHTML=html;
-  bindRows();
-  update();
+  const all=docsFor(country); window.__docs=all;
+  const idx=all.map((d,i)=>({d,i}));
+  $('#docs').innerHTML = renderGroup('Wymagane', idx.filter(x=>!x.d.opt)) + renderGroup('Jeśli dotyczy', idx.filter(x=>x.d.opt));
+  bindRows(); $('#zgoda').checked=false; update();
 }
 function renderGroup(title, items){
   if(!items.length) return '';
   let h='<div class="grp-title">'+title+'</div>';
   items.forEach(({d,i})=>{
-    h+='<div class="doc" data-i="'+i+'">'
-      +'<div class="status"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></div>'
-      +'<div class="body"><div class="name">'+d.name+' <span class="tag '+(d.req?'req':'opt')+'">'+(d.req?'Wymagane':'Opcjonalne')+'</span></div>'
-      +'<div class="desc">'+d.desc+'</div>'
-      +'<div class="slot"></div></div></div>';
+    h+='<div class="doc" data-i="'+i+'"><div class="status"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></div>'
+      +'<div class="body"><div class="name">'+d.name+' <span class="tag '+(d.opt?'opt':'req')+'">'+(d.opt?'Opcjonalne':'Wymagane')+'</span></div>'
+      +'<div class="desc">'+d.desc+'</div><div class="err"></div><div class="slot"></div></div></div>';
   });
   return h;
 }
 function bindRows(){
   document.querySelectorAll('.doc').forEach(row=>{
-    const slot=row.querySelector('.slot'); const i=row.dataset.i;
     renderSlot(row);
-    // drag&drop na wierszu
     row.addEventListener('dragover',e=>{e.preventDefault();row.querySelector('.drop')?.classList.add('over');});
     row.addEventListener('dragleave',()=>row.querySelector('.drop')?.classList.remove('over'));
-    row.addEventListener('drop',e=>{e.preventDefault();const f=e.dataTransfer.files[0];if(f)setFile(i,f);});
+    row.addEventListener('drop',e=>{e.preventDefault();const f=e.dataTransfer.files[0];if(f)setFile(row.dataset.i,f);});
   });
 }
 function renderSlot(row){
-  const i=row.dataset.i; const slot=row.querySelector('.slot'); const f=files[i];
+  const i=row.dataset.i, slot=row.querySelector('.slot'), f=files[i];
   if(f){
     row.classList.add('done');
     slot.innerHTML='<div class="file"><div class="fic"><svg viewBox="0 0 24 24"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"/></svg></div>'
       +'<div class="fname">'+f.name+'</div><div class="fmeta">'+f.size+'</div>'
       +'<button class="del" title="Usuń"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>';
-    slot.querySelector('.del').onclick=(e)=>{e.stopPropagation();delete files[i];row.classList.remove('done');renderSlot(row);update();};
+    slot.querySelector('.del').onclick=e=>{e.stopPropagation();delete files[i];row.classList.remove('done');renderSlot(row);update();};
   }else{
     row.classList.remove('done');
     slot.innerHTML='<div class="drop"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 17v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2"/></svg></div>'
@@ -266,26 +294,30 @@ function renderSlot(row){
 }
 const picker=$('#picker'); let activeIdx=null;
 function openPicker(i){ activeIdx=i; picker.value=''; picker.click(); }
-picker.onchange=()=>{ const f=picker.files[0]; if(f!=null&&activeIdx!=null) setFile(activeIdx,f); };
+picker.onchange=()=>{ const f=picker.files[0]; if(f&&activeIdx!=null) setFile(activeIdx,f); };
 function setFile(i,f){
+  const row=document.querySelector('.doc[data-i="'+i+'"]'); const err=row.querySelector('.err');
+  const okType=/^image\//.test(f.type)||f.type==='application/pdf'||/\.(jpe?g|png|pdf)$/i.test(f.name);
+  if(!okType){ row.classList.add('invalid'); err.textContent='Zły format. Wgraj zdjęcie (JPG, PNG) albo PDF.'; return; }
+  if(f.size>MAX){ row.classList.add('invalid'); err.textContent='Plik za duży (limit 10 MB). Zmniejsz zdjęcie i spróbuj ponownie.'; return; }
+  row.classList.remove('invalid'); err.textContent='';
   const kb=f.size/1024; files[i]={name:f.name, size: kb>1024?(kb/1024).toFixed(1)+' MB':Math.max(1,Math.round(kb))+' KB'};
-  const row=document.querySelector('.doc[data-i="'+i+'"]'); renderSlot(row); update();
+  renderSlot(row); update();
 }
 function update(){
   const all=window.__docs||[];
-  const reqIdx=all.map((d,i)=>({d,i})).filter(x=>x.d.req).map(x=>x.i);
+  const reqIdx=all.map((d,i)=>({d,i})).filter(x=>!x.d.opt).map(x=>x.i);
   const reqDone=reqIdx.filter(i=>files[i]).length;
   $('#cnt').textContent='Wymagane: '+reqDone+' z '+reqIdx.length;
   $('#bar').style.width=(reqIdx.length?reqDone/reqIdx.length*100:0)+'%';
-  $('#send').disabled = reqDone<reqIdx.length;
+  $('#send').disabled = !(reqDone>=reqIdx.length && $('#zgoda').checked);
 }
+document.addEventListener('change',e=>{ if(e.target&&e.target.id==='zgoda') update(); });
 $('#send').onclick=()=>{
   const b=$('#send'); b.disabled=true; $('#sendlbl').outerHTML='<span class="spin"></span><span>Wysyłam...</span>';
-  setTimeout(()=>{
-    $('#panel').style.display='none';
+  setTimeout(()=>{ $('#panel').style.display='none'; $('.country').style.display='none';
     $('#doneMsg').textContent='Dziękujemy. Sprawdzimy komplet dokumentów do rozliczenia z: '+country+' i odezwiemy się, jeśli czegoś zabraknie.';
-    $('#doneScreen').classList.add('on');
-  }, 900);
+    $('#doneScreen').classList.add('on'); }, 900);
 };
 </script>
 </body>
