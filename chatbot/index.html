@@ -90,6 +90,9 @@
 <script>
 const chat=document.getElementById('chat'), chipsBox=document.getElementById('chips'), inp=document.getElementById('inp');
 const DOK={Niemcy:'Lohnsteuerbescheinigung',Holandia:'Jaaropgave',Austria:'Lohnzettel (L16)',Belgia:'fiche 281.10',Norwegia:'sammenstillingsoppgave',Dania:'oplysningsseddel'};
+const GEN={Niemcy:'Niemiec',Holandia:'Holandii',Austria:'Austrii',Belgia:'Belgii',Norwegia:'Norwegii',Dania:'Danii'};
+const BACK={Niemcy:4,Holandia:5,Austria:5,Belgia:3,Norwegia:3,Dania:3};
+const YEARS={Niemcy:'2022-2025',Holandia:'2021-2025',Austria:'2021-2025',Belgia:'2023-2025',Norwegia:'2023-2025',Dania:'2023-2025'};
 let ctxCountry=null, mode=null;
 
 function add(text, who){
@@ -126,14 +129,41 @@ function botReply(intent, data){
     bot('Jasne. Dokumenty zależą od kraju. Z którego chcesz się rozliczyć?', COUNTRY_CHIPS);
   }else if(intent==='dok_kraj'){
     ctxCountry=data;
-    bot('Do rozliczenia z '+({Niemcy:'Niemiec',Holandia:'Holandii',Austria:'Austrii',Belgia:'Belgii',Norwegia:'Norwegii',Dania:'Danii'}[data])+' potrzebujesz przede wszystkim:<br>• kopii dowodu lub paszportu<br>• karty podatkowej <b>'+DOK[data]+'</b> od pracodawcy<br>• zaświadczenia o dochodach z Polski (druk UE/EWR)<br>• pełnomocnictwa (podpisujesz online)<br><br>Nie masz karty podatkowej? Pomożemy ją odzyskać. Chcesz przesłać dokumenty albo zostawić kontakt?',
-    [{label:'Prześlij dokumenty',intent:'upload'},{label:'Zostaw kontakt',intent:'lead'},{label:'Wróć do menu',intent:'menu'}]);
+    bot('Do rozliczenia z '+GEN[data]+' potrzebujesz przede wszystkim:<br>• kopii dowodu lub paszportu<br>• karty podatkowej <b>'+DOK[data]+'</b> od pracodawcy<br>• zaświadczenia o dochodach z Polski (druk UE/EWR)<br>• pełnomocnictwa (podpisujesz online)'
+    +(data==='Holandia'?'<br>• potwierdzenia numeru konta bankowego':'')
+    +'<br><br>Nie masz karty podatkowej? Pomożemy ją odzyskać. Co dalej?',
+    [{label:'Ile lat wstecz?',intent:'lata_kraj'},{label:'Sprawdź, czy warto',intent:'warto_kraj'},{label:'Prześlij dokumenty',intent:'upload'},{label:'Zostaw kontakt',intent:'lead'}]);
+  }else if(intent==='lata_kraj'){
+    const k=ctxCountry;
+    if(!k){ bot('Z którego kraju chcesz się rozliczyć?', COUNTRY_CHIPS); return; }
+    bot('Z '+GEN[k]+' rozliczysz się nawet <b>'+BACK[k]+' lata/lat wstecz</b>, czyli teraz za lata <b>'+YEARS[k]+'</b>. Im starszy rok, tym szybciej się przedawnia, więc lepiej nie zwlekać z najwcześniejszym.',
+    [{label:'Sprawdź, czy warto',intent:'warto_kraj'},{label:'Prześlij dokumenty',intent:'upload'},{label:'Wróć do menu',intent:'menu'}]);
+  }else if(intent==='warto_kraj'){
+    const k=ctxCountry;
+    if(!k){ bot('Powiedz najpierw, z którego kraju się rozliczasz.', COUNTRY_CHIPS); return; }
+    if(k==='Norwegia'){
+      bot('W Norwegii kluczowe jest, jak byłeś rozliczany. Wybierz:',
+      [{label:'PAYE / kildeskatt (25%)',intent:'okres',data:'paye'},{label:'Zasady ogólne',intent:'okres',data:'ogolne'},{label:'Nie wiem',intent:'okres',data:'niewiem'}]);
+    }else{
+      bot('Najważniejsze pytanie: pracowałeś przez cały rok, czy tylko część?',
+      [{label:'Tylko część roku',intent:'okres',data:'czesc'},{label:'Cały rok',intent:'okres',data:'caly'},{label:'Różnie',intent:'okres',data:'roznie'}]);
+    }
+  }else if(intent==='okres'){
+    let txt;
+    if(data==='paye') txt='Przy rozliczeniu PAYE (25% z każdej wypłaty) system nie przewiduje odliczeń, więc <b>zwykle nie ma zwrotu</b>. Zweryfikujemy to jednak bezpłatnie: czasem część poboru da się odzyskać albo opłaca się przejść na zasady ogólne.';
+    else if(data==='czesc') txt='Praca przez <b>część roku prawie zawsze oznacza nadpłatę</b> do zwrotu. Zaliczki liczono, jakbyś zarabiał przez cały rok. To najczęstszy powód zwrotu, więc raczej warto.';
+    else if(data==='caly') txt='Przy pracy przez cały rok zwrot nie jest przesądzony, ale często i tak przysługuje. Zależy od ulg i sytuacji (klasa/stawka podatkowa, dzieci, dojazdy). <b>Policzymy to bezpłatnie</b>.';
+    else if(data==='ogolne') txt='Na zasadach ogólnych plus dojazdy do Polski (status pendler) często wychodzi realny zwrot. <b>Warto sprawdzić.</b>';
+    else txt='Żeby to uczciwie ocenić, musimy spojrzeć na Twój okres pracy i dokumenty. Zrobimy to <b>bezpłatnie i bez zobowiązań</b>.';
+    bot(txt+'<br><br>Chcesz, żebyśmy oddzwonili i policzyli konkretną kwotę?',
+    [{label:'Zostaw kontakt',intent:'lead'},{label:'Prześlij dokumenty',intent:'upload'},{label:'Wróć do menu',intent:'menu'}]);
   }else if(intent==='czas'){
     bot('Czas zależy od urzędu w danym kraju, zwykle od kilku tygodni do kilku miesięcy. Przez cały czas informujemy Cię o statusie sprawy, więc nie musisz dopytywać.', [{label:'Jak zacząć?',intent:'start'},{label:'Wróć do menu',intent:'menu'}]);
   }else if(intent==='koszt'){
     bot('Wstępną kalkulację zwrotu robimy <b>bezpłatnie i bez zobowiązań</b>. Koszt samego rozliczenia ustalamy indywidualnie i podajemy po sprawdzeniu Twojej sytuacji, żebyś wiedział na czym stoisz zanim cokolwiek zdecydujesz.', [{label:'Sprawdź, czy warto',intent:'warto'},{label:'Zostaw kontakt',intent:'lead'}]);
   }else if(intent==='warto'){
-    bot('Najszybciej sprawdzisz to w naszym krótkim kwizie: <a href="../kwalifikacja/">4 pytania i wiesz, czy warto</a>. Mogę też od razu przekazać Cię do konsultanta.', [{label:'Otwórz kwiz',intent:'kwiz'},{label:'Zostaw kontakt',intent:'lead'},{label:'Wróć do menu',intent:'menu'}]);
+    if(ctxCountry){ botReply('warto_kraj'); return; }
+    bot('Chętnie sprawdzę. Z którego kraju się rozliczasz? Albo wypełnij nasz <a href="../kwalifikacja/">kwiz (4 pytania)</a>.', [...COUNTRY_CHIPS.slice(0,6),{label:'Otwórz kwiz',intent:'kwiz'}]);
   }else if(intent==='kwiz'){
     bot('Otwieram kwiz kwalifikacji. <a href="../kwalifikacja/">Kliknij tutaj</a>, żeby go wypełnić. Gdyby coś było niejasne, jestem tu.', [{label:'Wróć do menu',intent:'menu'}]);
   }else if(intent==='upload'){
