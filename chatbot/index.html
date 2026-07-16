@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>All-tax - asystent AI (draft)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#262261; --navy2:#3a3486; --red:#ED1C24; --text:#3A3A4C; --muted:#7a7f95;
+    --line:#e4e6f2; --line2:#eef0f7; --ok:#1e9e5a; --okbg:#e8f7ef;
+    --eout:cubic-bezier(.23,1,.32,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased;
+    background:linear-gradient(180deg,#eef0f7,#f5f6fb);min-height:100vh}
+  .note{max-width:760px;margin:0 auto;padding:16px 20px 0;font-size:12px;color:#8a8fa5;text-align:center;line-height:1.5}
+  /* delikatne tlo makiety strony */
+  .bg{max-width:760px;margin:20px auto 0;padding:0 24px;opacity:.55;pointer-events:none;user-select:none}
+  .bg h1{font-size:30px;font-weight:800;color:var(--navy);margin-bottom:14px}
+  .bg .sk{height:12px;border-radius:6px;background:#e2e5ef;margin-bottom:10px}
+  .bg .sk.a{width:100%}.bg .sk.b{width:88%}.bg .sk.c{width:70%}
+
+  /* WIDGET */
+  .widget{position:fixed;right:24px;bottom:24px;width:376px;max-width:calc(100vw - 32px);height:560px;max-height:calc(100vh - 48px);
+    background:#fff;border-radius:18px;box-shadow:0 30px 70px -24px rgba(38,34,97,.6);display:flex;flex-direction:column;overflow:hidden;border:1px solid #e6e8f4}
+  .whead{background:var(--navy);color:#fff;padding:15px 18px;display:flex;align-items:center;gap:12px}
+  .whead .av{width:38px;height:38px;border-radius:50%;background:#fff;display:grid;place-items:center;position:relative;flex:none}
+  .whead .av b{color:var(--navy);font-weight:800;font-size:15px}
+  .whead .av::after{content:"";position:absolute;right:-1px;bottom:-1px;width:11px;height:11px;border-radius:50%;background:#3ad07f;border:2px solid var(--navy)}
+  .whead .nm{font-size:14.5px;font-weight:800;line-height:1.2}
+  .whead .on{font-size:11.5px;color:rgba(255,255,255,.7)}
+
+  .chat{flex:1;overflow-y:auto;padding:18px 16px 8px;background:#f7f8fd;display:flex;flex-direction:column;gap:10px}
+  .msg{max-width:82%;font-size:13.5px;line-height:1.5;padding:10px 13px;border-radius:14px;animation:pop .3s var(--eout) both}
+  .msg.bot{align-self:flex-start;background:#fff;color:#2b2b33;border-top-left-radius:4px;box-shadow:0 1px 2px rgba(38,34,97,.07)}
+  .msg.user{align-self:flex-end;background:var(--navy);color:#fff;border-top-right-radius:4px}
+  .msg a{color:var(--red);font-weight:700}
+  .msg.bot a{color:var(--navy);text-decoration:underline}
+  .typing{align-self:flex-start;background:#fff;border-radius:14px;border-top-left-radius:4px;padding:12px 14px;display:flex;gap:4px;box-shadow:0 1px 2px rgba(38,34,97,.07)}
+  .typing i{width:7px;height:7px;border-radius:50%;background:#c3c6dd;animation:blink 1.2s infinite}
+  .typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
+
+  .chips{display:flex;flex-wrap:wrap;gap:7px;padding:6px 16px 10px;background:#f7f8fd}
+  .chip{border:1.5px solid #d5d8ec;background:#fff;color:var(--navy);font-family:inherit;font-size:12.5px;font-weight:600;padding:8px 13px;border-radius:20px;cursor:pointer;
+    transition:border-color .16s var(--eout),background .16s var(--eout),transform .1s}
+  .chip:hover{border-color:var(--navy);background:#f4f5fd} .chip:active{transform:scale(.96)}
+
+  .composer{display:flex;gap:8px;padding:12px 14px;border-top:1px solid var(--line);background:#fff}
+  .composer input{flex:1;border:1.5px solid var(--line);border-radius:22px;padding:11px 15px;font-family:inherit;font-size:14px;color:var(--text)}
+  .composer input:focus{outline:none;border-color:var(--navy)}
+  .composer button{flex:none;width:42px;height:42px;border-radius:50%;border:none;background:var(--red);color:#fff;cursor:pointer;display:grid;place-items:center;transition:transform .12s,filter .2s}
+  .composer button:hover{filter:brightness(1.08)} .composer button:active{transform:scale(.94)}
+  .composer button svg{width:18px;height:18px;stroke:#fff;stroke-width:2.2;fill:none}
+
+  .disc{font-size:10.5px;color:#a7abbe;text-align:center;padding:0 14px 10px;background:#fff;line-height:1.4}
+
+  @keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes blink{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+  @media(max-width:480px){.widget{right:0;bottom:0;width:100vw;height:100vh;max-height:100vh;border-radius:0;border:none}.bg{display:none}}
+  @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="note">Wersja robocza (demo). Konsultant AI z propozycji (Filar 1): odpowiada z zatwierdzonej bazy Q&A all-tax, a trudniejsze sprawy przekazuje do człowieka z przechwyceniem kontaktu. Odpowiedzi tu są skryptowane; w wersji produkcyjnej pod spodem działa model AI na Waszej bazie wiedzy, bez wiążących porad podatkowych.</div>
+
+<div class="bg">
+  <h1>Zwrot podatku z zagranicy</h1>
+  <div class="sk a"></div><div class="sk b"></div><div class="sk a"></div><div class="sk c"></div>
+</div>
+
+<div class="widget">
+  <div class="whead">
+    <div class="av"><b>A</b></div>
+    <div><div class="nm">Asystent All-tax</div><div class="on">zwykle odpowiada od razu</div></div>
+  </div>
+  <div class="chat" id="chat"></div>
+  <div class="chips" id="chips"></div>
+  <div class="composer">
+    <input id="inp" type="text" placeholder="Napisz wiadomość..." autocomplete="off">
+    <button onclick="sendUser()" aria-label="Wyślij"><svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg></button>
+  </div>
+  <div class="disc">Asystent odpowiada z bazy wiedzy All-tax. Nie udziela wiążących porad podatkowych.</div>
+</div>
+
+<script>
+const chat=document.getElementById('chat'), chipsBox=document.getElementById('chips'), inp=document.getElementById('inp');
+const DOK={Niemcy:'Lohnsteuerbescheinigung',Holandia:'Jaaropgave',Austria:'Lohnzettel (L16)',Belgia:'fiche 281.10',Norwegia:'sammenstillingsoppgave',Dania:'oplysningsseddel'};
+let ctxCountry=null, mode=null;
+
+function add(text, who){
+  const d=document.createElement('div'); d.className='msg '+who; d.innerHTML=text; chat.appendChild(d); chat.scrollTop=chat.scrollHeight;
+}
+function setChips(arr){
+  chipsBox.innerHTML=''; (arr||[]).forEach(c=>{
+    const b=document.createElement('button'); b.className='chip'; b.textContent=c.label;
+    b.onclick=()=>{ add(c.label,'user'); setChips([]); botReply(c.intent, c.data); };
+    chipsBox.appendChild(b);
+  });
+}
+function typing(){ const t=document.createElement('div'); t.className='typing'; t.id='typing'; t.innerHTML='<i></i><i></i><i></i>'; chat.appendChild(t); chat.scrollTop=chat.scrollHeight; }
+function stopTyping(){ const t=document.getElementById('typing'); if(t)t.remove(); }
+
+function bot(text, chips, delay){
+  typing();
+  setTimeout(()=>{ stopTyping(); add(text,'bot'); if(chips!==undefined)setChips(chips); }, delay||700);
+}
+
+const HOME_CHIPS=[
+  {label:'Z których krajów rozliczacie?',intent:'kraje'},
+  {label:'Jakie dokumenty?',intent:'dok'},
+  {label:'Ile trwa zwrot?',intent:'czas'},
+  {label:'Ile to kosztuje?',intent:'koszt'},
+  {label:'Czy mi się należy?',intent:'warto'}
+];
+const COUNTRY_CHIPS=Object.keys(DOK).map(k=>({label:k,intent:'dok_kraj',data:k}));
+
+function botReply(intent, data){
+  if(intent==='kraje'){
+    bot('Rozliczamy zwrot podatku z <b>6 krajów</b>: Niemcy, Holandia, Austria, Belgia, Norwegia i Dania. Z którego pracowałeś?', COUNTRY_CHIPS);
+  }else if(intent==='dok'){
+    bot('Jasne. Dokumenty zależą od kraju. Z którego chcesz się rozliczyć?', COUNTRY_CHIPS);
+  }else if(intent==='dok_kraj'){
+    ctxCountry=data;
+    bot('Do rozliczenia z '+({Niemcy:'Niemiec',Holandia:'Holandii',Austria:'Austrii',Belgia:'Belgii',Norwegia:'Norwegii',Dania:'Danii'}[data])+' potrzebujesz przede wszystkim:<br>• kopii dowodu lub paszportu<br>• karty podatkowej <b>'+DOK[data]+'</b> od pracodawcy<br>• zaświadczenia o dochodach z Polski (druk UE/EWR)<br>• pełnomocnictwa (podpisujesz online)<br><br>Nie masz karty podatkowej? Pomożemy ją odzyskać. Chcesz przesłać dokumenty albo zostawić kontakt?',
+    [{label:'Prześlij dokumenty',intent:'upload'},{label:'Zostaw kontakt',intent:'lead'},{label:'Wróć do menu',intent:'menu'}]);
+  }else if(intent==='czas'){
+    bot('Czas zależy od urzędu w danym kraju, zwykle od kilku tygodni do kilku miesięcy. Przez cały czas informujemy Cię o statusie sprawy, więc nie musisz dopytywać.', [{label:'Jak zacząć?',intent:'start'},{label:'Wróć do menu',intent:'menu'}]);
+  }else if(intent==='koszt'){
+    bot('Wstępną kalkulację zwrotu robimy <b>bezpłatnie i bez zobowiązań</b>. Koszt samego rozliczenia ustalamy indywidualnie i podajemy po sprawdzeniu Twojej sytuacji, żebyś wiedział na czym stoisz zanim cokolwiek zdecydujesz.', [{label:'Sprawdź, czy warto',intent:'warto'},{label:'Zostaw kontakt',intent:'lead'}]);
+  }else if(intent==='warto'){
+    bot('Najszybciej sprawdzisz to w naszym krótkim kwizie: <a href="../kwalifikacja/">4 pytania i wiesz, czy warto</a>. Mogę też od razu przekazać Cię do konsultanta.', [{label:'Otwórz kwiz',intent:'kwiz'},{label:'Zostaw kontakt',intent:'lead'},{label:'Wróć do menu',intent:'menu'}]);
+  }else if(intent==='kwiz'){
+    bot('Otwieram kwiz kwalifikacji. <a href="../kwalifikacja/">Kliknij tutaj</a>, żeby go wypełnić. Gdyby coś było niejasne, jestem tu.', [{label:'Wróć do menu',intent:'menu'}]);
+  }else if(intent==='upload'){
+    bot('Dokumenty prześlesz bezpiecznie tutaj: <a href="../dokumenty/">formularz uploadu</a>. Pokaże Ci dokładnie to, czego potrzebujemy dla Twojego kraju.', [{label:'Zostaw kontakt',intent:'lead'},{label:'Wróć do menu',intent:'menu'}]);
+  }else if(intent==='start'){
+    bot('Najprościej: zostaw imię i telefon, oddzwonimy w ciągu 24h i przeprowadzimy Cię przez wszystko. Albo od razu prześlij dokumenty.', [{label:'Zostaw kontakt',intent:'lead'},{label:'Prześlij dokumenty',intent:'upload'}]);
+  }else if(intent==='lead' || intent==='human'){
+    mode='lead';
+    bot('Przekażę Cię do konsultanta. Zostaw proszę <b>imię i numer telefonu</b> (napisz w jednej wiadomości), a oddzwonimy w ciągu 24h.', []);
+  }else if(intent==='menu'){
+    bot('Jasne, o co jeszcze chcesz zapytać?', HOME_CHIPS);
+  }else{
+    bot('Nie jestem pewien tej odpowiedzi, ale konsultant na pewno pomoże. Chcesz, żebym przekazał Cię do człowieka?', [{label:'Tak, przekaż do konsultanta',intent:'lead'},{label:'Wróć do menu',intent:'menu'}]);
+  }
+}
+
+/* prosta obsluga wpisanego tekstu (keyword matching) */
+function sendUser(){
+  const t=inp.value.trim(); if(!t)return; add(t,'user'); inp.value=''; setChips([]);
+  const low=t.toLowerCase();
+  if(mode==='lead'){
+    mode=null;
+    const nm=(t.match(/[a-ząćęłńóśźż]+/i)||['Dziękujemy'])[0];
+    bot('Dziękujemy, '+nm.charAt(0).toUpperCase()+nm.slice(1)+'! Konsultant oddzwoni w ciągu 24h. Miłego dnia 🙂', [{label:'Wróć do menu',intent:'menu'}]);
+    return;
+  }
+  let intent='fallback', data=null;
+  if(/kraj|państw|gdzie|niemc|holand|austri|belg|norweg|dani/.test(low)){
+    const found=Object.keys(DOK).find(k=>low.includes(k.toLowerCase().slice(0,5)));
+    if(found && /dokument|potrzeb|papier/.test(low)){ intent='dok_kraj'; data=found; }
+    else if(found){ intent='dok_kraj'; data=found; }
+    else intent='kraje';
+  }
+  else if(/dokument|papier|potrzeb|karta/.test(low)) intent='dok';
+  else if(/ile.*trwa|jak.*długo|kiedy|czas|termin/.test(low)) intent='czas';
+  else if(/koszt|cen|ile.*kosztuje|prowizj|opłat|płac/.test(low)) intent='koszt';
+  else if(/warto|należy|kwota|ile.*dostan|kalkulat|oblicz/.test(low)) intent='warto';
+  else if(/konsultant|człowiek|rozmow|zadzwoń|kontakt|telefon|oddzwoń/.test(low)) intent='lead';
+  else if(/zacząć|zaczynam|start|jak.*rozlicz|chcę.*rozlicz/.test(low)) intent='start';
+  else if(/cześć|dzień dobry|hej|witam|siema/.test(low)) intent='menu';
+  botReply(intent, data);
+}
+inp.addEventListener('keydown',e=>{ if(e.key==='Enter')sendUser(); });
+
+/* start */
+bot('Cześć! 👋 Jestem asystentem All-tax. Pomogę Ci sprawdzić zwrot podatku z zagranicy. O co chcesz zapytać?', HOME_CHIPS, 500);
+</script>
+</body>
+</html>
