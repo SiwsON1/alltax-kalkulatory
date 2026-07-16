@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>All-tax - wspólna skrzynka omnichannel (draft)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#262261; --navy2:#3a3486; --red:#ED1C24; --text:#3A3A4C; --muted:#7a7f95;
+    --line:#e4e6f2; --line2:#eef0f7; --ok:#1e9e5a; --okbg:#e8f7ef;
+    --wa:#25d366; --mes:#0084ff; --ig:#e1306c; --mail:#5b53b0; --chat:#ED1C24;
+    --eout:cubic-bezier(.23,1,.32,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;background:#eef0f7;color:var(--text);line-height:1.5;-webkit-font-smoothing:antialiased}
+  .note{max-width:1040px;margin:0 auto;padding:14px 20px 0;font-size:12px;color:#8a8fa5;text-align:center;line-height:1.5}
+  .app{max-width:1040px;margin:14px auto;background:#fff;border-radius:14px;overflow:hidden;border:1px solid #e6e8f4;box-shadow:0 18px 48px -26px rgba(38,34,97,.4)}
+
+  .bar{background:var(--navy);color:#fff;padding:13px 20px;display:flex;align-items:center;justify-content:space-between}
+  .bar .b{display:flex;align-items:center;gap:10px;font-weight:800;font-size:15px}
+  .bar .b .lg{width:28px;height:28px;border-radius:7px;background:#fff;color:var(--navy);display:grid;place-items:center;font-weight:800;font-size:13px}
+  .bar .b small{font-weight:600;font-size:11.5px;color:rgba(255,255,255,.6);display:block;margin-top:-2px}
+  .bar .me{font-size:12.5px;color:rgba(255,255,255,.85);display:flex;align-items:center;gap:8px}
+  .bar .me .a{width:28px;height:28px;border-radius:50%;background:var(--navy2);display:grid;place-items:center;font-weight:700;font-size:12px}
+
+  .grid{display:grid;grid-template-columns:326px 1fr 250px;height:600px}
+  /* LISTA */
+  .list{border-right:1px solid var(--line2);display:flex;flex-direction:column;min-height:0}
+  .tabs{display:flex;gap:4px;padding:12px 14px 10px}
+  .tab{font-size:12px;font-weight:700;color:var(--muted);padding:6px 11px;border-radius:7px;cursor:pointer}
+  .tab.on{background:#f0eef9;color:var(--navy)}
+  .convs{flex:1;overflow-y:auto}
+  .cv{display:flex;gap:11px;padding:13px 15px;cursor:pointer;border-top:1px solid var(--line2);position:relative}
+  .cv:first-child{border-top:none}
+  .cv:hover{background:#fafbff}
+  .cv.on{background:#f4f5fd}
+  .cv .avw{position:relative;flex:none}
+  .cv .av{width:40px;height:40px;border-radius:50%;background:#e9eaf5;display:grid;place-items:center;font-weight:700;color:var(--navy);font-size:14px}
+  .cv .ch{position:absolute;right:-3px;bottom:-3px;width:19px;height:19px;border-radius:50%;display:grid;place-items:center;border:2px solid #fff}
+  .cv .ch svg{width:10px;height:10px;fill:#fff}
+  .cv .body{flex:1;min-width:0}
+  .cv .top{display:flex;justify-content:space-between;gap:8px}
+  .cv .nm{font-size:13.5px;font-weight:700;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cv .tm{font-size:11px;color:var(--muted);white-space:nowrap}
+  .cv .pv{font-size:12.5px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cv.unread .nm{color:var(--navy)} .cv.unread .pv{color:var(--text);font-weight:600}
+  .cv .dot{position:absolute;right:15px;bottom:16px;width:8px;height:8px;border-radius:50%;background:var(--red)}
+
+  /* ROZMOWA */
+  .conv{display:flex;flex-direction:column;min-height:0;background:#f7f8fd}
+  .chead{padding:13px 18px;border-bottom:1px solid var(--line2);background:#fff;display:flex;align-items:center;gap:11px}
+  .chead .av{width:36px;height:36px;border-radius:50%;background:#e9eaf5;display:grid;place-items:center;font-weight:700;color:var(--navy);font-size:13px}
+  .chead .nm{font-size:14.5px;font-weight:800;color:var(--navy)}
+  .chead .via{font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:5px}
+  .chead .via .cdot{width:9px;height:9px;border-radius:50%}
+  .thread{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:10px}
+  .b{max-width:76%;font-size:13px;line-height:1.5;padding:9px 12px;border-radius:13px}
+  .b.them{align-self:flex-start;background:#fff;border-top-left-radius:4px;box-shadow:0 1px 2px rgba(38,34,97,.06)}
+  .b.us{align-self:flex-end;background:var(--navy);color:#fff;border-top-right-radius:4px}
+  .b .t{display:block;font-size:9.5px;opacity:.6;margin-top:3px;text-align:right}
+  .sys{align-self:center;font-size:11px;color:var(--muted);background:#eceefb;padding:4px 11px;border-radius:20px}
+  .composer{padding:12px 16px;background:#fff;border-top:1px solid var(--line2);display:flex;gap:9px}
+  .composer input{flex:1;border:1.5px solid var(--line);border-radius:20px;padding:10px 14px;font-family:inherit;font-size:13.5px}
+  .composer input:focus{outline:none;border-color:var(--navy)}
+  .composer .snd{flex:none;width:40px;height:40px;border-radius:50%;border:none;background:var(--red);color:#fff;cursor:pointer;display:grid;place-items:center}
+  .composer .snd svg{width:17px;height:17px;stroke:#fff;stroke-width:2.2;fill:none}
+
+  /* INFO */
+  .info{border-left:1px solid var(--line2);padding:18px 16px;overflow-y:auto}
+  .info .st{font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);margin:16px 0 8px}
+  .info .st:first-child{margin-top:0}
+  .kv{font-size:13px;color:var(--navy);font-weight:600;display:flex;align-items:center;gap:8px;padding:5px 0}
+  .kv img{width:20px;height:14px;border-radius:3px;box-shadow:0 0 0 1px rgba(38,34,97,.1);object-fit:cover}
+  .src{font-size:12px;color:var(--muted);line-height:1.5}
+  .act{display:block;width:100%;text-align:center;border:none;border-radius:8px;font-family:inherit;font-weight:700;font-size:12.5px;padding:10px;margin-top:8px;cursor:pointer}
+  .act.p{background:var(--navy);color:#fff} .act.s{background:#f0eef9;color:var(--navy)}
+  .stage{display:inline-flex;align-items:center;gap:6px;background:var(--amberbg,#fbf0e2);color:#b06f16;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:20px}
+
+  @media(max-width:900px){.grid{grid-template-columns:1fr}.list{display:none}.info{display:none}.grid.showlist .list{display:flex}.grid.showlist .conv{display:none}}
+  @media(prefers-reduced-motion:reduce){*{transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="note">Wersja robocza (demo). Wspólna skrzynka z propozycji (Filar 1): wiadomości z Messengera, Instagrama, WhatsAppa, maila i czatu na stronie trafiają do jednej kolejki z historią i kontekstem klienta. Widok od strony zespołu all-tax. To narzędzie zewnętrzne (np. Respond.io/Trengo), płatne, tu pokazujemy sam pomysł.</div>
+
+<div class="app">
+  <div class="bar">
+    <div class="b"><span class="lg">A</span><div>All-tax<small>Wspólna skrzynka</small></div></div>
+    <div class="me"><span class="a">AN</span> Anna Nowak</div>
+  </div>
+  <div class="grid" id="grid">
+    <div class="list">
+      <div class="tabs"><span class="tab on">Wszystkie</span><span class="tab">Nieprzeczytane</span><span class="tab">Moje</span></div>
+      <div class="convs" id="convs"></div>
+    </div>
+    <div class="conv">
+      <div class="chead" id="chead"></div>
+      <div class="thread" id="thread"></div>
+      <div class="composer"><input type="text" placeholder="Napisz odpowiedź, wyślemy tym samym kanałem..."><button class="snd"><svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg></button></div>
+    </div>
+    <div class="info" id="info"></div>
+  </div>
+</div>
+
+<script>
+const CH={
+  wa:{c:'var(--wa)',n:'WhatsApp',svg:'<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.5A10 10 0 1 0 12 2z"/></svg>'},
+  mes:{c:'var(--mes)',n:'Messenger',svg:'<svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.1 2 11.2c0 2.9 1.4 5.5 3.7 7.2V22l3.3-1.8c.9.3 1.9.4 3 .4 5.5 0 10-4.1 10-9.4C22 6.1 17.5 2 12 2z"/></svg>'},
+  ig:{c:'var(--ig)',n:'Instagram',svg:'<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="#fff" stroke-width="2.4"/><circle cx="12" cy="12" r="4" fill="none" stroke="#fff" stroke-width="2.4"/><circle cx="17.5" cy="6.5" r="1.3" fill="#fff"/></svg>'},
+  mail:{c:'var(--mail)',n:'E-mail',svg:'<svg viewBox="0 0 24 24"><path d="M3 5h18v14H3z" fill="none" stroke="#fff" stroke-width="2.2"/><path d="M4 6l8 6 8-6" fill="none" stroke="#fff" stroke-width="2.2"/></svg>'},
+  chat:{c:'var(--chat)',n:'Czat na stronie',svg:'<svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/></svg>'}
+};
+const LOC={Niemcy:'flaga-niemcy',Holandia:'flaga-holandia',Austria:'flaga-austria',Belgia:'flaga-belgia'};
+const CONV=[
+  {id:0,ch:'wa',nm:'Marek Kowalczyk',ini:'MK',tm:'2 min',unread:true,kraj:'Niemcy',stage:'Nowy lead',src:'Przekazany z asystenta AI na stronie',
+   msgs:[['them','Cześć, chcę rozliczyć podatek z Niemiec za 2024. Pracowałem tam pół roku.','12:41'],['sys','Rozmowę przekazał asystent AI'],['them','Jakie dokumenty muszę wysłać?','12:41']]},
+  {id:1,ch:'mes',nm:'Anna Wiśniewska',ini:'AW',tm:'18 min',unread:true,kraj:'Holandia',stage:'Pytanie',src:'Messenger (fanpage All-tax)',
+   msgs:[['them','Dzień dobry, ile trwa zwrot z Holandii?','12:25'],['us','Dzień dobry! Zwykle od kilku tygodni do kilku miesięcy, zależnie od urzędu. Na bieżąco informujemy o statusie.','12:27'],['them','A da się to przyspieszyć?','12:26']]},
+  {id:2,ch:'ig',nm:'@kasia_travels',ini:'KT',tm:'1 godz',unread:false,kraj:'Norwegia',stage:'Pytanie',src:'Instagram DM',
+   msgs:[['them','hej, rozliczacie tez norwegie?','11:40'],['us','Cześć! Tak, Norwegia jest w naszej ofercie. Byłaś rozliczana PAYE czy na zasadach ogólnych?','11:44']]},
+  {id:3,ch:'mail',nm:'jan.nowak@gmail.com',ini:'JN',tm:'3 godz',unread:false,kraj:'Austria',stage:'Sprawa w toku',src:'E-mail (biuro@all-tax.pl)',
+   msgs:[['them','Dzień dobry, dosłałem kartę podatkową. Czego jeszcze brakuje?','09:50'],['us','Dzień dobry, dziękujemy. Brakuje jeszcze zaświadczenia o dochodach z Polski (UE/EWR). Można je dosłać przez formularz.','10:12']]},
+  {id:4,ch:'chat',nm:'Gość (strona)',ini:'G',tm:'wczoraj',unread:false,kraj:null,stage:'Pytanie',src:'Czat na all-tax.pl',
+   msgs:[['them','czy warto sie rozliczac jak pracowalem 3 miesiace w belgii?','wczoraj'],['us','Praca przez część roku prawie zawsze oznacza nadpłatę, więc zwykle warto. Możesz to sprawdzić w naszym kwizie w 4 pytaniach.','wczoraj']]}
+];
+let sel=0;
+const $=s=>document.querySelector(s);
+function chBadge(ch){return '<span class="ch" style="background:'+CH[ch].c+'">'+CH[ch].svg+'</span>';}
+
+function renderList(){
+  $('#convs').innerHTML=CONV.map(c=>
+    '<div class="cv '+(c.unread?'unread':'')+(c.id===sel?' on':'')+'" onclick="pick('+c.id+')">'
+    +'<div class="avw"><div class="av">'+c.ini+'</div>'+chBadge(c.ch)+'</div>'
+    +'<div class="body"><div class="top"><span class="nm">'+c.nm+'</span><span class="tm">'+c.tm+'</span></div>'
+    +'<div class="pv">'+c.msgs[c.msgs.length-1][1]+'</div></div>'
+    +(c.unread?'<span class="dot"></span>':'')+'</div>').join('');
+}
+function renderConv(){
+  const c=CONV[sel];
+  $('#chead').innerHTML='<div class="av">'+c.ini+'</div><div><div class="nm">'+c.nm+'</div>'
+    +'<div class="via"><span class="cdot" style="background:'+CH[c.ch].c+'"></span> '+CH[c.ch].n+'</div></div>';
+  $('#thread').innerHTML=c.msgs.map(m=> m[0]==='sys'
+    ? '<div class="sys">'+m[1]+'</div>'
+    : '<div class="b '+(m[0]==='us'?'us':'them')+'">'+m[1]+'<span class="t">'+(m[2]||'')+'</span></div>').join('');
+  $('#thread').scrollTop=$('#thread').scrollHeight;
+  const flag=LOC[c.kraj]?'<img src="https://all-tax.pl/wp-content/uploads/2023/12/'+LOC[c.kraj]+'.png">':'';
+  $('#info').innerHTML='<div class="st">Klient</div>'
+    +'<div class="kv">'+(c.ini)+' · '+c.nm+'</div>'
+    +(c.kraj?'<div class="kv">'+flag+' Zwrot z: '+c.kraj+'</div>':'<div class="src">Kraj: do ustalenia</div>')
+    +'<div class="st">Etap</div><span class="stage">'+c.stage+'</span>'
+    +'<div class="st">Źródło</div><div class="src">'+c.src+'</div>'
+    +'<div class="st">Akcje</div><button class="act p">Utwórz sprawę</button><button class="act s">Przypisz do siebie</button><button class="act s">Wyślij formularz dokumentów</button>';
+}
+function pick(i){ sel=i; CONV[i].unread=false; renderList(); renderConv(); $('#grid').classList.remove('showlist'); }
+renderList(); renderConv();
+</script>
+</body>
+</html>
